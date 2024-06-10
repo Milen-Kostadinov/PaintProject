@@ -17,8 +17,39 @@ namespace Draw.src.Model
     {
         internal class GroupShape : Shape
         {
+            private class Proportions 
+            {
+                float startPointProportionHorizontal;
+                float startPointProportionVertical;
+                float endPointProportionHorizontal;
+                float endPointProportionVertical;
+                
+                public float StartPointProportionHorizontal
+                {
+                    get { return startPointProportionHorizontal; }
+                    set { startPointProportionHorizontal = value; }
+                }
+                public float StartPointProportionVertical
+                {
+                    get { return startPointProportionVertical; }
+                    set { startPointProportionVertical = value; }
+                }
+                public float EndPointProportionHorizontal
+                {
+                    get { return endPointProportionHorizontal; }
+                    set { endPointProportionHorizontal = value; }
+                }
+                public float EndPointProportionVerical
+                {
+                    get { return endPointProportionVertical; }
+                    set { endPointProportionVertical = value; }
+                }
+                public Proportions() 
+                {                    
+                }
+            }
             List<Shape> shapes = new List<Shape>();
-            List<float> proportions = new List<float>();
+            List<Proportions> proportions = new List<Proportions>();
 
             public GroupShape(List<Shape> shapes)
             {
@@ -53,13 +84,11 @@ namespace Draw.src.Model
                 Height = EndPoint.Y - StartPoint.Y;
                 foreach (Shape shape in shapes)
                 {
-                    float proportion = (shape.StartPoint.X - StartPoint.X) / Width;
-                    proportions.Add(proportion);
-                    proportion = (shape.StartPoint.Y - StartPoint.Y) / Height;
-                    proportions.Add(proportion);
-                    proportion = (EndPoint.X - shape.EndPoint.X) / Width;
-                    proportions.Add(proportion);
-                    proportion = ( EndPoint.Y - shape.EndPoint.Y) / Height;
+                    Proportions proportion = new Proportions();                        
+                    proportion.StartPointProportionHorizontal = (shape.StartPoint.X - StartPoint.X) / Width;
+                    proportion.StartPointProportionVertical = (shape.StartPoint.Y - StartPoint.Y) / Height;
+                    proportion.EndPointProportionHorizontal = (EndPoint.X - shape.EndPoint.X) / Width;
+                    proportion.EndPointProportionVerical = ( EndPoint.Y - shape.EndPoint.Y) / Height;
                     proportions.Add(proportion);
                 }
                 Location = StartPoint;
@@ -82,8 +111,8 @@ namespace Draw.src.Model
                 base.DrawSelf(grfx);
                 for (int i = 0; i < shapes.Count; i++) 
                 {
-                    shapes.ElementAt(i).StartPoint = new PointF(StartPoint.X + Width * proportions[i*4], StartPoint.Y + Height * proportions[i*4 + 1]);
-                    shapes.ElementAt(i).EndPoint = new PointF(EndPoint.X - Width * proportions[i*4 + 2], EndPoint.Y - Height * proportions[i*4 + 3]);
+                    shapes.ElementAt(i).StartPoint = new PointF(StartPoint.X + Width * proportions[i].StartPointProportionHorizontal, StartPoint.Y + Height * proportions[i].StartPointProportionVertical);
+                    shapes.ElementAt(i).EndPoint = new PointF(EndPoint.X - Width * proportions[i].EndPointProportionHorizontal, EndPoint.Y - Height * proportions[i].EndPointProportionVerical);
                     shapes.ElementAt(i).DrawSelf(grfx);
                 }
                 grfx.DrawRectangle(Pens.Black, Location.X, Location.Y, Math.Abs(Width), Math.Abs(Height));
