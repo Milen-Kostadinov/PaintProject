@@ -129,60 +129,51 @@ namespace Draw
 		}
 		public virtual bool OutlineContainsPoint(PointF point)
 		{
-			if (new RectangleF(Location.X - 3, Location.Y - 3, 5, 5).Contains(point))
+			if (new RectangleF(Width > 0 ? StartPoint.X - 5 : StartPoint.X, Height > 0 ? StartPoint.Y - 5 : StartPoint.Y, 5, 5).Contains(point))
 			{
 				CurrentSelectedSide = SelectedSide.TopLeftCorner;
 				return true;
 			}
-			else if (new RectangleF(Location.X + Width, Location.Y - 3, 5, 5).Contains(point))
+			else if (new RectangleF(Width > 0 ? EndPoint.X : EndPoint.X - 5, Height > 0 ? StartPoint.Y - 5 : StartPoint.Y, 5, 5).Contains(point))
 			{
 				CurrentSelectedSide = SelectedSide.TopRightCorner;
 				return true;
 			}
-			else if (new RectangleF(Location.X - 3, Location.Y + Height, 5, 5).Contains(point))
+			else if (new RectangleF(Width > 0 ? StartPoint.X - 5 : StartPoint.X, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, 5, 5).Contains(point))
 			{
 				CurrentSelectedSide = SelectedSide.BottomLeftCorner;
 				return true;
 			}
-			else if (new RectangleF(Location.X + Width, Location.Y + Height, 5, 5).Contains(point))
+			else if (new RectangleF(Width > 0 ? EndPoint.X : EndPoint.X - 5, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, 5, 5).Contains(point))
 			{
 				CurrentSelectedSide = SelectedSide.BottomRightCorner;
 				return true;
 			}
 			//daskjdfashfjsahfasf
-			else if (new RectangleF(StartPoint.X, Height > 0 ? StartPoint.Y : (StartPoint.Y + Height), 5, Math.Abs(Height)).Contains(point))
+			else if (new RectangleF(Width > 0 ? StartPoint.X - 5 : StartPoint.X, Height > 0 ? StartPoint.Y : (StartPoint.Y + Height), 5, Math.Abs(Height)).Contains(point))
 			{
 				CurrentSelectedSide = SelectedSide.Left;
 				return true;
 			}
-			else if (new RectangleF(EndPoint.X, Height > 0 ? (EndPoint.Y - Height) : EndPoint.Y, 5, Math.Abs(Height)).Contains(point))
+			else if (new RectangleF(Width > 0 ? EndPoint.X : EndPoint.X - 5, Height > 0 ? (EndPoint.Y - Height) : EndPoint.Y, 5, Math.Abs(Height)).Contains(point))
 			{
 				CurrentSelectedSide = SelectedSide.Right;
 				return true;
 			}
 			//dsajkgfshjafgjhasgfa
-			else if (new RectangleF(Width > 0 ? StartPoint.X: StartPoint.X + Width, StartPoint.Y - 3, Math.Abs(Width), 5).Contains(point))
+			else if (new RectangleF(Width > 0 ? StartPoint.X : (StartPoint.X + Width), Height > 0 ? StartPoint.Y - 5 : StartPoint.Y, Math.Abs(Width), 5).Contains(point))
 			{
 				CurrentSelectedSide = SelectedSide.Top;
 				return true;
 			}
-			else if (new RectangleF(Width > 0 ? EndPoint.X - Width : EndPoint.X, EndPoint.Y, Math.Abs(Width), 5).Contains(point))
+			else if (new RectangleF(Width > 0 ? (EndPoint.X - Width) : EndPoint.X, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, Math.Abs(Width), 5).Contains(point))
 			{
 				CurrentSelectedSide = SelectedSide.Bottom;
 				return true;
 			}
 
             return false;
-		}
-		//ensures that the start point and end point are diagonally oposite to each other with start point being at top left
-		public virtual void FixPoints() 
-		{
-			PointF temp = startPoint;
-			startPoint = new PointF(startPoint.X < endPoint.X ? startPoint.X : endPoint.X,
-									startPoint.Y < endPoint.Y ? startPoint.Y : endPoint.Y);
-            endPoint = new PointF(temp.X > endPoint.X ? temp.X : endPoint.X,
-                                    temp.Y > endPoint.Y ? temp.Y : endPoint.Y);
-        }
+		} 
         public virtual void DrawSelf(Graphics grfx)
 		{
 			// shape.Rectangle.Inflate(shape.BorderWidth, shape.BorderWidth);
@@ -196,10 +187,23 @@ namespace Draw
             {
                 grfx.DrawRectangle(new Pen(Color.Black, 5), this.Location.X - 3, this.Location.Y - 3, Math.Abs(Width) + 6, Math.Abs(Height ) + 6);
             }          
-			grfx.FillRectangle(Brushes.Blue, Width > 0 ? (EndPoint.X - Width) : EndPoint.X, EndPoint.Y, Math.Abs(Width), 5);
-			grfx.FillRectangle(Brushes.Green, Width > 0 ? StartPoint.X : (StartPoint.X + Width), StartPoint.Y, Math.Abs(Width), 5);
-			grfx.FillRectangle(Brushes.Yellow, StartPoint.X, Height > 0 ? StartPoint.Y : (StartPoint.Y + Height), 5, Math.Abs(Height));
-			grfx.FillRectangle(Brushes.Magenta, EndPoint.X, Height > 0 ? (EndPoint.Y - Height): EndPoint.Y, 5, Math.Abs(Height));
+			//bottom
+			grfx.FillRectangle(Brushes.Blue, Width > 0 ? (EndPoint.X - Width) : EndPoint.X, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, Math.Abs(Width), 5);
+			//top
+			grfx.FillRectangle(Brushes.Green, Width > 0 ? StartPoint.X : (StartPoint.X + Width), Height > 0 ? StartPoint.Y - 5: StartPoint.Y, Math.Abs(Width), 5);
+			//left
+			grfx.FillRectangle(Brushes.Yellow, Width > 0 ? StartPoint.X - 5 : StartPoint.X, Height > 0 ? StartPoint.Y : (StartPoint.Y + Height), 5, Math.Abs(Height));
+			//right
+			grfx.FillRectangle(Brushes.Magenta, Width > 0 ? EndPoint.X : EndPoint.X - 5, Height > 0 ? (EndPoint.Y - Height): EndPoint.Y, 5, Math.Abs(Height));
+			//top left
+			grfx.FillRectangle(Brushes.Azure, Width > 0 ? StartPoint.X - 5 : StartPoint.X, Height > 0 ? StartPoint.Y - 5 : StartPoint.Y, 5, 5);
+			//top right
+			grfx.FillRectangle(Brushes.Brown, Width > 0 ?  EndPoint.X: EndPoint.X - 5, Height > 0 ? StartPoint.Y - 5: StartPoint.Y, 5, 5);
+			//bottom left
+			grfx.FillRectangle(Brushes.Gray, Width > 0 ? StartPoint.X - 5: StartPoint.X, Height > 0 ? EndPoint.Y: EndPoint.Y - 5, 5, 5);
+			//bottom right
+			grfx.FillRectangle(Brushes.Tomato, Width > 0 ? EndPoint.X : EndPoint.X - 5, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, 5, 5);
+
 		}
     }
 }

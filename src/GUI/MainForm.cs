@@ -135,7 +135,6 @@ namespace Draw
             if (dialogProcessor.IsDrawing)
             {
                 dialogProcessor.Selection.EndPoint = e.Location;
-                dialogProcessor.Selection.FixPoints();
                 dialogProcessor.Selection.HasBeenInteractedWith = true;
                 dialogProcessor.Selection.IsSelected = true;
             }
