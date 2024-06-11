@@ -29,15 +29,21 @@ namespace Draw
 			get { return shapeList; }
 			set { shapeList = value; }
 		}
-		
-		#endregion
-		
-		#region Drawing
-		
-		/// <summary>
-		/// Прерисува всички елементи в shapeList върху e.Graphics
-		/// </summary>
-		public void ReDraw(object sender, PaintEventArgs e)
+        private Shape selection;
+        public Shape Selection
+        {
+            get { return selection; }
+            set { selection = value; }
+        }
+
+        #endregion
+
+        #region Drawing
+
+        /// <summary>
+        /// Прерисува всички елементи в shapeList върху e.Graphics
+        /// </summary>
+        public void ReDraw(object sender, PaintEventArgs e)
 		{
 			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 			Draw(e.Graphics);

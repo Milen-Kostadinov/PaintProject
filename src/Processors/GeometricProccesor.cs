@@ -10,22 +10,26 @@ namespace Draw.src.Processors
 {
     public class GeometricProccesor : DisplayProcessor
     {
-        public void ExpandInDirection(PointF point, Shape selection)
+        public void ExpandInDirection(PointF point)
         {
-            switch (selection.CurrentSelectedSide)
+            switch (Selection.CurrentSelectedSide)
             {
-                case SelectedSide.Left: selection.StartPoint = new PointF(point.X, selection.StartPoint.Y); break;
-                case SelectedSide.Right: selection.EndPoint = new PointF(point.X, selection.EndPoint.Y); break;    
-                case SelectedSide.Top: selection.StartPoint = new PointF (selection.StartPoint.X, point.Y); break;
-                case SelectedSide.Bottom: selection.EndPoint = new PointF(selection.EndPoint.X, point.Y); break;
-                case SelectedSide.TopLeftCorner: selection.StartPoint = point; break;
-                case SelectedSide.BottomRightCorner: selection.EndPoint = point; break;
-                case SelectedSide.TopRightCorner: selection.StartPoint = new PointF(selection.StartPoint.X, point.Y);
-                                                    selection.EndPoint = new PointF(point.X, selection.EndPoint.Y); break;
-                case SelectedSide.BottomLeftCorner: selection.StartPoint = new PointF(point.X, selection.StartPoint.Y);
-                                                    selection.EndPoint = new PointF(selection.EndPoint.X, point.Y); break; 
+                case SelectedSide.Left: Selection.StartPoint = new PointF(point.X, Selection.StartPoint.Y); break;
+                case SelectedSide.Right: Selection.EndPoint = new PointF(point.X, Selection.EndPoint.Y); break;    
+                case SelectedSide.Top: Selection.StartPoint = new PointF (Selection.StartPoint.X, point.Y); break;
+                case SelectedSide.Bottom: Selection.EndPoint = new PointF(Selection.EndPoint.X, point.Y); break;
+                case SelectedSide.TopLeftCorner: Selection.StartPoint = point; break;
+                case SelectedSide.BottomRightCorner: Selection.EndPoint = point; break;
+                case SelectedSide.TopRightCorner: Selection.StartPoint = new PointF(Selection.StartPoint.X, point.Y);
+                                                    Selection.EndPoint = new PointF(point.X, Selection.EndPoint.Y); break;
+                case SelectedSide.BottomLeftCorner: Selection.StartPoint = new PointF(point.X, Selection.StartPoint.Y);
+                                                    Selection.EndPoint = new PointF(Selection.EndPoint.X, point.Y); break; 
                 default: Console.WriteLine("Selected side is null"); break;
             }
+        }
+        public float CalcAngle(PointF point)
+        {
+            return 180 - (float)(Math.Atan2(point.X - (Selection.Location.X + Math.Abs(Selection.Width) / 2), point.Y - (Selection.Location.Y + Math.Abs(Selection.Height) / 2)) * 180 / Math.PI);
         }
     }
 }

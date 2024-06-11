@@ -115,11 +115,11 @@ namespace Draw
 			get { return hasBeenInteractedWith; }
 			set { hasBeenInteractedWith = value; }
 		}
-		public Matrix matrixTransformation = new Matrix(); 
-		public Matrix MatrixTransformation
+		public Matrix matrix = new Matrix(); 
+		public Matrix Matrix
         {
-            get { return matrixTransformation; }
-            set { matrixTransformation = value; }
+            get { return matrix; }
+            set { matrix = value; }
         }
         #endregion
         public virtual bool Contains(PointF point)
@@ -173,11 +173,20 @@ namespace Draw
 			}
 
             return false;
-		} 
+		}
+		public bool RotationRectContains(PointF point) 
+		{
+			return new RectangleF(Location.X + Math.Abs(Width) / 2 - 2, Location.Y - 23, 7, 7).Contains(point);		
+		}
+		public virtual void Rotate(float angle) 
+		{
+			matrix.Reset();
+            matrix.RotateAt(angle, new PointF(Location.X + Math.Abs(Width) / 2, Location.Y + Math.Abs(Height) / 2));
+		}
         public virtual void DrawSelf(Graphics grfx)
 		{
 			// shape.Rectangle.Inflate(shape.BorderWidth, shape.BorderWidth);
-			grfx.Transform = MatrixTransformation;
+			grfx.Transform = matrix;
 
             Width = EndPoint.X - StartPoint.X;
             Height = EndPoint.Y - StartPoint.Y;
@@ -185,25 +194,26 @@ namespace Draw
                                  StartPoint.Y < EndPoint.Y ? StartPoint.Y : EndPoint.Y);
             if (isSelected)
             {
-                grfx.DrawRectangle(new Pen(Color.Black, 5), this.Location.X - 3, this.Location.Y - 3, Math.Abs(Width) + 6, Math.Abs(Height ) + 6);
-            }          
+                grfx.DrawRectangle(new Pen(Color.Black, 3), this.Location.X - 2, this.Location.Y - 2, Math.Abs(Width) + 4, Math.Abs(Height ) + 4);
+				grfx.FillRectangle(Brushes.Black, Location.X + Math.Abs(Width) / 2, Location.Y - 20, 3, 20);
+				grfx.FillRectangle(Brushes.Black, Location.X + Math.Abs(Width) / 2 - 2, Location.Y - 23, 7, 7);
+            }
 			//bottom
 			grfx.FillRectangle(Brushes.Blue, Width > 0 ? (EndPoint.X - Width) : EndPoint.X, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, Math.Abs(Width), 5);
 			//top
-			grfx.FillRectangle(Brushes.Green, Width > 0 ? StartPoint.X : (StartPoint.X + Width), Height > 0 ? StartPoint.Y - 5: StartPoint.Y, Math.Abs(Width), 5);
+			grfx.FillRectangle(Brushes.Green, Width > 0 ? StartPoint.X : (StartPoint.X + Width), Height > 0 ? StartPoint.Y - 5 : StartPoint.Y, Math.Abs(Width), 5);
 			//left
 			grfx.FillRectangle(Brushes.Yellow, Width > 0 ? StartPoint.X - 5 : StartPoint.X, Height > 0 ? StartPoint.Y : (StartPoint.Y + Height), 5, Math.Abs(Height));
 			//right
-			grfx.FillRectangle(Brushes.Magenta, Width > 0 ? EndPoint.X : EndPoint.X - 5, Height > 0 ? (EndPoint.Y - Height): EndPoint.Y, 5, Math.Abs(Height));
+			grfx.FillRectangle(Brushes.Magenta, Width > 0 ? EndPoint.X : EndPoint.X - 5, Height > 0 ? (EndPoint.Y - Height) : EndPoint.Y, 5, Math.Abs(Height));
 			//top left
 			grfx.FillRectangle(Brushes.Azure, Width > 0 ? StartPoint.X - 5 : StartPoint.X, Height > 0 ? StartPoint.Y - 5 : StartPoint.Y, 5, 5);
 			//top right
-			grfx.FillRectangle(Brushes.Brown, Width > 0 ?  EndPoint.X: EndPoint.X - 5, Height > 0 ? StartPoint.Y - 5: StartPoint.Y, 5, 5);
+			grfx.FillRectangle(Brushes.Brown, Width > 0 ? EndPoint.X : EndPoint.X - 5, Height > 0 ? StartPoint.Y - 5 : StartPoint.Y, 5, 5);
 			//bottom left
-			grfx.FillRectangle(Brushes.Gray, Width > 0 ? StartPoint.X - 5: StartPoint.X, Height > 0 ? EndPoint.Y: EndPoint.Y - 5, 5, 5);
+			grfx.FillRectangle(Brushes.Gray, Width > 0 ? StartPoint.X - 5 : StartPoint.X, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, 5, 5);
 			//bottom right
 			grfx.FillRectangle(Brushes.Tomato, Width > 0 ? EndPoint.X : EndPoint.X - 5, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, 5, 5);
-
 		}
     }
 }

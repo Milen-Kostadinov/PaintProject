@@ -54,7 +54,6 @@ namespace Draw.src.Model
             public GroupShape(List<Shape> shapes)
             {
                 this.shapes = shapes;
-                Console.WriteLine(shapes.Count);
                 if (shapes.Count >= 1)
                 {
                     StartPoint = shapes[0].Location;
@@ -104,6 +103,15 @@ namespace Draw.src.Model
                 else
                     return false;
             }
+            public override void Rotate(float angle)
+            {
+                base.Rotate(angle);
+                foreach (Shape shape in shapes) 
+                {
+                    shape.Matrix.Reset();
+                    shape.Matrix.RotateAt(angle, new PointF(Location.X + Math.Abs(Width) / 2, Location.Y + Math.Abs(Height) / 2));
+                }
+            }
             public override void DrawSelf(Graphics grfx)
             {
                 /*Console.WriteLine("Start: " + StartPoint.ToString());
@@ -115,7 +123,6 @@ namespace Draw.src.Model
                     shapes.ElementAt(i).EndPoint = new PointF(EndPoint.X - Width * proportions[i].EndPointProportionHorizontal, EndPoint.Y - Height * proportions[i].EndPointProportionVerical);
                     shapes.ElementAt(i).DrawSelf(grfx);
                 }
-                grfx.DrawRectangle(Pens.Black, Location.X, Location.Y, Math.Abs(Width), Math.Abs(Height));
             }
         }
     }

@@ -51,12 +51,11 @@ namespace Draw
 
         void ViewPortMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			EllipseShape elipse = new EllipseShape(new PointF(200, 200), new PointF(300, 300));
-			elipse.GroupId = 1;
+            EllipseShape elipse = new EllipseShape(new PointF(200, 200), new PointF(300, 300));
+            elipse.GroupId = 1;
             elipse.HasBeenInteractedWith = true;
             dialogProcessor.ShapeList.Add(elipse);
-			viewPort.Invalidate();
-
+            viewPort.Invalidate();
             if (dialogProcessor.Selection != null && !dialogProcessor.Selection.HasBeenInteractedWith)
             {
                 dialogProcessor.Selection.StartPoint = e.Location;
@@ -65,14 +64,19 @@ namespace Draw
                 return;
             }
             if (pickUpSpeedButton.Checked) {
-                dialogProcessor.Selection = dialogProcessor.ContainsPoint(e.Location);
+                if (dialogProcessor.Selection != null && dialogProcessor.Selection.RotationRectContains(e.Location)) 
+                {
+                    dialogProcessor.IsRotating = true;
+                    return;
+                }
                 if (dialogProcessor.Selection != null && dialogProcessor.Selection.OutlineContainsPoint(e.Location)) 
 				{
                     dialogProcessor.IsResizing = true;
-					dialogProcessor.Selection.IsSelected = true;
+                    return;
                 }
+                dialogProcessor.Selection = dialogProcessor.ContainsPoint(e.Location);
 				if (dialogProcessor.Selection != null) {
-                    dialogProcessor.Selection.IsSelected = true;                    
+                    dialogProcessor.Selection.IsSelected = true;                  
 					statusBar.Items[0].Text = "Последно действие: Селекция на примитив";
 					dialogProcessor.IsDragging = true;
 					dialogProcessor.LastLocation = e.Location;
@@ -107,28 +111,29 @@ namespace Draw
 
 		void ViewPortMouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
+            if (dialogProcessor.IsRotating)
+            {
+                dialogProcessor.Selection.Rotate(dialogProcessor.CalcAngle(e.Location));
+            }
             if (dialogProcessor.IsDrawing)
             {
                 dialogProcessor.Selection.EndPoint = e.Location;
-                viewPort.Invalidate();
             }
 			if (dialogProcessor.IsSelecting) 
 			{
                 dialogProcessor.SelectionTool.EndPoint = e.Location;
 				dialogProcessor.SelectElements();
-                viewPort.Invalidate();
             }
 			if (dialogProcessor.IsResizing) 
 			{
-				dialogProcessor.ExpandInDirection(e.Location, dialogProcessor.Selection);
-                viewPort.Invalidate();
+				dialogProcessor.ExpandInDirection(e.Location);
             }
 			else if (dialogProcessor.IsDragging) {
 				if (dialogProcessor.Selection != null) statusBar.Items[0].Text = "Последно действие: Влачене";
 				dialogProcessor.TranslateTo(e.Location);
-                viewPort.Invalidate();
             }
-		}
+            viewPort.Invalidate();
+        }
 
 		void ViewPortMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
@@ -141,7 +146,6 @@ namespace Draw
             if (dialogProcessor.IsSelecting)
             {
                 dialogProcessor.CreateGroup();
-                dialogProcessor.IsSelecting = false;
 				dialogProcessor.ShapeList.Remove(dialogProcessor.SelectionTool);
             }
             if (dialogProcessor.IsResizing)
@@ -151,12 +155,13 @@ namespace Draw
             dialogProcessor.IsResizing = false;
 			dialogProcessor.IsDragging = false;
             dialogProcessor.IsDrawing = false;
-			viewPort.Invalidate();
+            dialogProcessor.IsRotating = false;
+            dialogProcessor.IsSelecting = false;
+            viewPort.Invalidate();
 		}
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
             dialogProcessor.AddRandomSquare();
-			dialogProcessor.ShapeList.Add(new RectWithLines(new RectangleF(400, 500, 200, 300), 255));
             viewPort.Invalidate();
         }
 

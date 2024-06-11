@@ -49,10 +49,10 @@ namespace Draw.src.Model
         }
         public override void DrawSelf(Graphics grfx)
         {
+            base.DrawSelf(grfx);
 
             grfx.FillEllipse(new SolidBrush(FillColor), Location.X, Location.Y, Math.Abs(Width), Math.Abs(Height));
             grfx.DrawEllipse(Pens.Black, Location.X, Location.Y, Math.Abs(Width), Math.Abs(Height));
-            base.DrawSelf(grfx);
         }
         
     }

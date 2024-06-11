@@ -46,7 +46,7 @@ namespace Draw.src.Processors
             {
                 return true;
             }
-            //catch edge case where shape is entirely in the selection region
+            //catch edge case where shape is entirely in the Selection region
             if (rect.Contains(shape.Location))
             {
                 return true;

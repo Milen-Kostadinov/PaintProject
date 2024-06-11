@@ -22,13 +22,6 @@ namespace Draw
         #endregion
 
         #region Properties
-
-        private Shape selection;
-        public Shape Selection
-        {
-            get { return selection; }
-            set { selection = value; }
-        }
         private bool isDragging;
         public bool IsDragging
         {
@@ -40,6 +33,12 @@ namespace Draw
         {
             get { return isResizing; }
             set { isResizing = value; }
+        }
+        private bool isRotating;
+        public bool IsRotating
+        {
+            get { return isRotating; }
+            set { isRotating = value; }
         }
         private bool isSelecting;
         public bool IsSelecting
@@ -118,7 +117,8 @@ namespace Draw
         {
             for (int i = ShapeList.Count - 1; i >= 0; i--)
             {
-                if (ShapeList[i].Contains(point) || ShapeList[i].OutlineContainsPoint(point))
+                Console.WriteLine(ShapeList[i].ToString());
+                if (ShapeList[i].Contains(point) /*|| ShapeList[i].OutlineContainsPoint(point) || ShapeList[i].RotationRectContains(point)*/)
                 {
                     ShapeList[i].FillColor = Color.Red;
 
@@ -149,7 +149,7 @@ namespace Draw
         {
             foreach (Shape shape in ShapeList)
             {
-                if (shape.GroupId == selection.GroupId)
+                if (shape.GroupId == Selection.GroupId)
                 {
                     TranslateToPoint(point, shape);
                 }
@@ -179,7 +179,10 @@ namespace Draw
                 }
             }
             GroupShape group = new GroupShape(shapes);
-            ShapeList.Add(group);
+            if(shapes.Count > 0)
+            {
+                ShapeList.Add(group);
+            }
 
             foreach (Shape shape in shapes)
             {
