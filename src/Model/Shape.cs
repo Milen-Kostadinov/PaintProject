@@ -66,6 +66,12 @@ namespace Draw
             get { return endPoint; }
             set { endPoint = value; }
         }
+        private PointF rotationPoint;
+        public PointF RotationPoint
+        {
+            get { return rotationPoint; }
+            set { rotationPoint = value; }
+        }
         private int fillOpacity;
 		public virtual int FillOpacity
 		{
@@ -115,12 +121,18 @@ namespace Draw
 			get { return hasBeenInteractedWith; }
 			set { hasBeenInteractedWith = value; }
 		}
-		public Matrix matrix = new Matrix(); 
+		private Matrix matrix = new Matrix(); 
 		public Matrix Matrix
         {
             get { return matrix; }
             set { matrix = value; }
         }
+		private float lastRotationAngle;
+		public float LastRotationAngle 
+		{
+			get { return lastRotationAngle; }
+			set { lastRotationAngle = value; }
+		}
         #endregion
         public virtual bool Contains(PointF point)
 		{
@@ -128,45 +140,47 @@ namespace Draw
 			return rect.Contains(point.X, point.Y);
 		}
 		public virtual bool OutlineContainsPoint(PointF point)
-		{
-			if (new RectangleF(Width > 0 ? StartPoint.X - 5 : StartPoint.X, Height > 0 ? StartPoint.Y - 5 : StartPoint.Y, 5, 5).Contains(point))
+        {
+            PointF[] points = { point };
+            Matrix.TransformPoints(points);
+            if (new RectangleF(Width > 0 ? StartPoint.X - 5 : StartPoint.X, Height > 0 ? StartPoint.Y - 5 : StartPoint.Y, 5, 5).Contains(points[0]))
 			{
 				CurrentSelectedSide = SelectedSide.TopLeftCorner;
 				return true;
 			}
-			else if (new RectangleF(Width > 0 ? EndPoint.X : EndPoint.X - 5, Height > 0 ? StartPoint.Y - 5 : StartPoint.Y, 5, 5).Contains(point))
+			else if (new RectangleF(Width > 0 ? EndPoint.X : EndPoint.X - 5, Height > 0 ? StartPoint.Y - 5 : StartPoint.Y, 5, 5).Contains(points[0]))
 			{
 				CurrentSelectedSide = SelectedSide.TopRightCorner;
 				return true;
 			}
-			else if (new RectangleF(Width > 0 ? StartPoint.X - 5 : StartPoint.X, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, 5, 5).Contains(point))
+			else if (new RectangleF(Width > 0 ? StartPoint.X - 5 : StartPoint.X, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, 5, 5).Contains(points[0]))
 			{
 				CurrentSelectedSide = SelectedSide.BottomLeftCorner;
 				return true;
 			}
-			else if (new RectangleF(Width > 0 ? EndPoint.X : EndPoint.X - 5, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, 5, 5).Contains(point))
+			else if (new RectangleF(Width > 0 ? EndPoint.X : EndPoint.X - 5, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, 5, 5).Contains(points[0]))
 			{
 				CurrentSelectedSide = SelectedSide.BottomRightCorner;
 				return true;
 			}
 			//daskjdfashfjsahfasf
-			else if (new RectangleF(Width > 0 ? StartPoint.X - 5 : StartPoint.X, Height > 0 ? StartPoint.Y : (StartPoint.Y + Height), 5, Math.Abs(Height)).Contains(point))
+			else if (new RectangleF(Width > 0 ? StartPoint.X - 5 : StartPoint.X, Height > 0 ? StartPoint.Y : (StartPoint.Y + Height), 5, Math.Abs(Height)).Contains(points[0]))
 			{
 				CurrentSelectedSide = SelectedSide.Left;
 				return true;
 			}
-			else if (new RectangleF(Width > 0 ? EndPoint.X : EndPoint.X - 5, Height > 0 ? (EndPoint.Y - Height) : EndPoint.Y, 5, Math.Abs(Height)).Contains(point))
+			else if (new RectangleF(Width > 0 ? EndPoint.X : EndPoint.X - 5, Height > 0 ? (EndPoint.Y - Height) : EndPoint.Y, 5, Math.Abs(Height)).Contains(points[0]))
 			{
 				CurrentSelectedSide = SelectedSide.Right;
 				return true;
 			}
 			//dsajkgfshjafgjhasgfa
-			else if (new RectangleF(Width > 0 ? StartPoint.X : (StartPoint.X + Width), Height > 0 ? StartPoint.Y - 5 : StartPoint.Y, Math.Abs(Width), 5).Contains(point))
+			else if (new RectangleF(Width > 0 ? StartPoint.X : (StartPoint.X + Width), Height > 0 ? StartPoint.Y - 5 : StartPoint.Y, Math.Abs(Width), 5).Contains(points[0]))
 			{
 				CurrentSelectedSide = SelectedSide.Top;
 				return true;
 			}
-			else if (new RectangleF(Width > 0 ? (EndPoint.X - Width) : EndPoint.X, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, Math.Abs(Width), 5).Contains(point))
+			else if (new RectangleF(Width > 0 ? (EndPoint.X - Width) : EndPoint.X, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, Math.Abs(Width), 5).Contains(points[0]))
 			{
 				CurrentSelectedSide = SelectedSide.Bottom;
 				return true;
@@ -178,14 +192,10 @@ namespace Draw
 		{
 			return new RectangleF(Location.X + Math.Abs(Width) / 2 - 2, Location.Y - 23, 7, 7).Contains(point);		
 		}
-		public virtual void Rotate(float angle) 
-		{
-			matrix.Reset();
-            matrix.RotateAt(angle, new PointF(Location.X + Math.Abs(Width) / 2, Location.Y + Math.Abs(Height) / 2));
-		}
         public virtual void DrawSelf(Graphics grfx)
 		{
 			// shape.Rectangle.Inflate(shape.BorderWidth, shape.BorderWidth);
+			//Rotate(LastRotationAngle);
 			grfx.Transform = matrix;
 
             Width = EndPoint.X - StartPoint.X;

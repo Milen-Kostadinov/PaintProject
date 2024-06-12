@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,14 @@ namespace Draw.src.Processors
         public float CalcAngle(PointF point)
         {
             return 180 - (float)(Math.Atan2(point.X - (Selection.Location.X + Math.Abs(Selection.Width) / 2), point.Y - (Selection.Location.Y + Math.Abs(Selection.Height) / 2)) * 180 / Math.PI);
+        }
+        public void RotateShape(Shape selection, float angle)
+        {
+            selection.Matrix.Reset();
+            selection.RotationPoint = new PointF(selection.Location.X + Math.Abs(selection.Width) / 2, selection.Location.Y + Math.Abs(selection.Height) / 2);
+            selection.Matrix.RotateAt(angle, new PointF(selection.Location.X + Math.Abs(selection.Width) / 2, selection.Location.Y + Math.Abs(selection.Height) / 2));
+            selection.LastRotationAngle = angle;
+            Console.WriteLine(angle);
         }
     }
 }

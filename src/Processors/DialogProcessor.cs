@@ -4,6 +4,7 @@ using Draw.src.Processors;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace Draw
@@ -117,7 +118,6 @@ namespace Draw
         {
             for (int i = ShapeList.Count - 1; i >= 0; i--)
             {
-                Console.WriteLine(ShapeList[i].ToString());
                 if (ShapeList[i].Contains(point) /*|| ShapeList[i].OutlineContainsPoint(point) || ShapeList[i].RotationRectContains(point)*/)
                 {
                     ShapeList[i].FillColor = Color.Red;
@@ -140,20 +140,31 @@ namespace Draw
         }
         public void TranslateToPoint(PointF point, Shape shape)
         {
+            /*Console.WriteLine(lastLocation + " " + point);
+            PointF[] points = { point, lastLocation };
+            Matrix matrix = new Matrix();
+            matrix.Rotate(90);
+            matrix.TransformPoints(points);
+            Console.WriteLine(points[0] + " " + points[1]);*/
+
+
+            /*PointF[] points = { point, lastLocation };
+            shape.Matrix.TransformPoints(points);*/
+
+            /*shape.StartPoint = new PointF(shape.StartPoint.X + Math.Abs(points[0].X) - Math.Abs(points[1].X),
+                                        shape.StartPoint.Y + Math.Abs(points[0].Y) - Math.Abs(points[1].Y));
+            shape.EndPoint = new PointF(shape.EndPoint.X + Math.Abs(points[0].X) - Math.Abs(points[1].X),
+                                        shape.EndPoint.Y + Math.Abs(points[0].Y) - Math.Abs(points[1].Y));*/
+
             shape.StartPoint = new PointF(shape.StartPoint.X + point.X - lastLocation.X,
                                         shape.StartPoint.Y + point.Y - lastLocation.Y);
             shape.EndPoint = new PointF(shape.EndPoint.X + point.X - lastLocation.X,
                                         shape.EndPoint.Y + point.Y - lastLocation.Y);
+            RotateShape(Selection, shape.LastRotationAngle);
         }
         public void TranslateTo(PointF point)
         {
-            foreach (Shape shape in ShapeList)
-            {
-                if (shape.GroupId == Selection.GroupId)
-                {
-                    TranslateToPoint(point, shape);
-                }
-            }
+            TranslateToPoint(point, Selection);
             lastLocation = point;
         }
         public void SelectElements()
@@ -167,7 +178,7 @@ namespace Draw
                 }
             }
         }
-        public void CreateGroup()
+        public Shape CreateGroup()
         {
             List<Shape> shapes = new List<Shape>();
 
@@ -188,6 +199,7 @@ namespace Draw
             {
                 ShapeList.Remove(shape);
             }
+            return group;
         }
     }
 }

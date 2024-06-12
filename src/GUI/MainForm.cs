@@ -74,19 +74,16 @@ namespace Draw
                     dialogProcessor.IsResizing = true;
                     return;
                 }
+                if (dialogProcessor.ContainsPoint(e.Location) == null && dialogProcessor.Selection != null) 
+                {
+                    dialogProcessor.Selection.IsSelected = false;
+                }
                 dialogProcessor.Selection = dialogProcessor.ContainsPoint(e.Location);
 				if (dialogProcessor.Selection != null) {
                     dialogProcessor.Selection.IsSelected = true;                  
 					statusBar.Items[0].Text = "Последно действие: Селекция на примитив";
 					dialogProcessor.IsDragging = true;
 					dialogProcessor.LastLocation = e.Location;
-                    foreach (Shape shape in dialogProcessor.ShapeList)
-                    {
-                        if (shape.GroupId == dialogProcessor.Selection.GroupId)
-                        {
-                            shape.IsSelected = true;
-                        }
-                    }
                     viewPort.Invalidate();
 				}
             }
@@ -96,24 +93,13 @@ namespace Draw
 				dialogProcessor.SelectionTool.StartPoint = e.Location;
                 dialogProcessor.ShapeList.Add(dialogProcessor.SelectionTool);
 			}
-            foreach (Shape shape in dialogProcessor.ShapeList)
-            {
-                if (dialogProcessor.Selection != null && shape.GroupId == dialogProcessor.Selection.GroupId)
-                {
-                    shape.IsSelected = true;
-                }
-                else
-                {
-                    shape.IsSelected = false;
-                }
-            }
         }
 
 		void ViewPortMouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
             if (dialogProcessor.IsRotating)
             {
-                dialogProcessor.Selection.Rotate(dialogProcessor.CalcAngle(e.Location));
+                dialogProcessor.RotateShape(dialogProcessor.Selection, dialogProcessor.CalcAngle(e.Location));
             }
             if (dialogProcessor.IsDrawing)
             {
@@ -145,7 +131,7 @@ namespace Draw
             }
             if (dialogProcessor.IsSelecting)
             {
-                dialogProcessor.CreateGroup();
+                dialogProcessor.Selection = dialogProcessor.CreateGroup();
 				dialogProcessor.ShapeList.Remove(dialogProcessor.SelectionTool);
             }
             if (dialogProcessor.IsResizing)
@@ -210,8 +196,6 @@ namespace Draw
         }
         private void viewPort_KeyDown(object sender, KeyEventArgs e)
         {        
-			Console.WriteLine(e.KeyCode);
-            Console.WriteLine(e.KeyCode == Keys.ControlKey && e.KeyCode == Keys.C);
             if (e.Control && e.Shift &&  e.KeyCode == Keys.C)
             {
                 dialogProcessor.AddRandomRectangle();
