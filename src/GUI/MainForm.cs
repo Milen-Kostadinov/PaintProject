@@ -208,7 +208,7 @@ namespace Draw
 
         private void toolStripButton6_Click(object sender, EventArgs e)
         {
-            StarShape star = new StarShape();
+            RhombusShape star = new RhombusShape();
             dialogProcessor.ShapeList.Add(star);
             dialogProcessor.Selection = star;
             viewPort.Invalidate();

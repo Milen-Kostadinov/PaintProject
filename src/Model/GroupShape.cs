@@ -97,12 +97,7 @@ namespace Draw.src.Model
             }
             public override bool Contains(PointF point)
             {
-                PointF[] points = { point };
-                Matrix matrix = Matrix.Clone();
-                matrix.Invert();
-                matrix.TransformPoints(points);
-                matrix.Dispose();
-                if (new RectangleF(Location.X, Location.Y, Math.Abs(Width), Math.Abs(Height)).Contains(points[0]))
+                if (new RectangleF(Location.X, Location.Y, Math.Abs(Width), Math.Abs(Height)).Contains(point))
 
                     return true;
                 else

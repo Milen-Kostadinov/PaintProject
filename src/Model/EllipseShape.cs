@@ -37,19 +37,14 @@ namespace Draw.src.Model
 
         public override bool Contains(PointF point)
         {
-            PointF[] points = { point };
-            Matrix matrix = Matrix.Clone();
-            matrix.Invert();
-            matrix.TransformPoints(points);
-            matrix.Dispose();
             /*PointF[] points = { point };
             Matrix.TransformPoints(points);*/
             float cx = base.Location.X + Math.Abs(Width) / 2;
             float cy = base.Location.Y + Math.Abs(Height) / 2;
             float rx = Math.Abs(Width) / 2;
             float ry = Math.Abs(Height) / 2;
-            float sth = (points[0].X - cx) / rx;
-            float sth2 = (points[0].Y - cy)/ ry;
+            float sth = (point.X - cx) / rx;
+            float sth2 = (point.Y - cy)/ ry;
             float left = sth*sth;
             float right = sth2*sth2;
             float result = (left + right);

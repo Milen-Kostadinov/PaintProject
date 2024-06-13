@@ -83,7 +83,7 @@ namespace Draw
         }
         public void AddStar()
         {
-            StarShape star = new StarShape();
+            RhombusShape star = new RhombusShape();
             ShapeList.Add(star);
             Selection = star;
         }
@@ -114,7 +114,7 @@ namespace Draw
         {
             for (int i = ShapeList.Count - 1; i >= 0; i--)
             {
-                if (ShapeList[i].Contains(point) /*|| ShapeList[i].OutlineContainsPoint(point) || ShapeList[i].RotationRectContains(point)*/)
+                if (ShapeList[i].Contains(RotatePointInShapePlane(point, ShapeList[i])) /*|| ShapeList[i].OutlineContainsPoint(point) || ShapeList[i].RotationRectContains(point)*/)
                 {
                     ShapeList[i].FillColor = Color.Red;
 
@@ -180,6 +180,7 @@ namespace Draw
 
             foreach (Shape shape in ShapeList)
             {
+
                 if (SelectionTool.Contains(shape) && shape != SelectionTool)
                 {
                     shapes.Add(shape);
@@ -196,6 +197,15 @@ namespace Draw
                 ShapeList.Remove(shape);
             }
             return group;
+        }
+        public PointF RotatePointInShapePlane(PointF point, Shape shape) 
+        {
+            PointF[] points = { point };
+            Matrix matrix = shape.Matrix.Clone();
+            matrix.Invert();
+            matrix.TransformPoints(points);
+            matrix.Dispose();
+            return points[0];
         }
     }
 }
