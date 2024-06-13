@@ -81,40 +81,59 @@ namespace Draw
             ShapeList.Add(elipse);
             Selection = elipse;
         }
+        public void AddDiamond()
+        {
+            DiamondShape diamond = new DiamondShape();
+            ShapeList.Add(diamond);
+            Selection = diamond;
+        }
+        public void AddIsoscelesTriangle()
+        {
+            IsoscelesTriangleShape triangle = new IsoscelesTriangleShape();
+            ShapeList.Add(triangle);
+            Selection = triangle;
+        }
+        public void AddRightTriangle()
+        {
+            RightTriangleShape triangle = new RightTriangleShape();
+            ShapeList.Add(triangle);
+            Selection = triangle;
+        }
+        public void AddLineLine()
+        {
+            LineShape line = new LineShape();
+            ShapeList.Add(line);
+            Selection = line;
+        }
+        public void AddPentagon()
+        {
+            PentagonShape pentagon = new PentagonShape();
+            ShapeList.Add(pentagon);
+            Selection = pentagon;
+        }
+        public void AddHexagon()
+        {
+            HexagonShape hexagon = new HexagonShape();
+            ShapeList.Add(hexagon);
+            Selection = hexagon;
+        }
         public void AddStar()
         {
-            RhombusShape star = new RhombusShape();
+            StarShape star = new StarShape();
             ShapeList.Add(star);
             Selection = star;
         }
-
-        public void AddRandomSquare()
+        public void AddArrow()
         {
-            Random rnd = new Random();
-            int x = rnd.Next(100, 1000);
-            int y = rnd.Next(100, 600);
-
-            SquareShape square = new SquareShape(new Rectangle(x, y, 100, 100));
-            square.FillColor = Color.Turquoise;
-
-            ShapeList.Add(square);
-        }
-        public void AddRandomLine()
-        {
-            Random rnd = new Random();
-            PointF startPoint = new PointF(rnd.Next(100, 1000), rnd.Next(100, 600));
-            PointF endPoint = new PointF(rnd.Next(100, 1000), rnd.Next(100, 600));
-
-            LineShape line = new LineShape(startPoint, endPoint); // Използваме конструктора с две точки за създаване на линията
-            line.FillColor = Color.Red;
-
-            ShapeList.Add(line);
+            ArrowShape arrow = new ArrowShape();
+            ShapeList.Add(arrow);
+            Selection = arrow;
         }
         public Shape ContainsPoint(PointF point)
         {
             for (int i = ShapeList.Count - 1; i >= 0; i--)
             {
-                if (ShapeList[i].Contains(RotatePointInShapePlane(point, ShapeList[i])) /*|| ShapeList[i].OutlineContainsPoint(point) || ShapeList[i].RotationRectContains(point)*/)
+                if (ShapeList[i].Contains(RotatePointInShapePlane(point, ShapeList[i])))
                 {
                     ShapeList[i].FillColor = Color.Red;
 

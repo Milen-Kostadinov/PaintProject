@@ -129,36 +129,55 @@ namespace Draw
             dialogProcessor.IsSelecting = false;
             viewPort.Invalidate();
         }
-
-        void DrawRectangleSpeedButtonClick(object sender, EventArgs e)
+        #region AddShapeButtons
+        private void rectangleButton_Click(object sender, EventArgs e)
         {
             dialogProcessor.AddRectangle();
-
             statusBar.Items[0].Text = "Последно действие: Рисуване на правоъгълник";
-
-            viewPort.Invalidate();
         }
-        private void toolStripButton1_Click(object sender, EventArgs e)
+
+        private void elipseButton_Click(object sender, EventArgs e)
         {
             dialogProcessor.AddEllipse();
-            viewPort.Invalidate();
-        }
-        private void AddStarButton_Click(object sender, EventArgs e)
-        {
-            dialogProcessor.AddStar();
-            viewPort.Invalidate();
-        }
-        private void toolStripButton2_Click(object sender, EventArgs e)
-        {
-            dialogProcessor.AddRandomSquare();
-            viewPort.Invalidate();
         }
 
-        private void toolStripButton3_Click(object sender, EventArgs e)
+        private void sametriangleButton_Click(object sender, EventArgs e)
         {
-            dialogProcessor.AddRandomLine();
-            viewPort.Invalidate();
+            dialogProcessor.AddIsoscelesTriangle();
         }
+
+        private void rightTriangleButton_Click(object sender, EventArgs e)
+        {
+            dialogProcessor.AddRightTriangle();
+        }
+
+        private void diamondButton_Click(object sender, EventArgs e)
+        {
+            dialogProcessor.AddDiamond();
+        }
+        private void lineButton_Click(object sender, EventArgs e)
+        {
+            dialogProcessor.AddLineLine();
+        }
+        private void pentagonButton_Click(object sender, EventArgs e)
+        {
+            dialogProcessor.AddPentagon();
+        }
+        private void hexagonButton_Click(object sender, EventArgs e)
+        {
+            dialogProcessor.AddHexagon();
+        }
+        private void starButton_Click(object sender, EventArgs e)
+        {
+            dialogProcessor.AddStar();
+        }
+        private void arrowButton_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine(
+            sender.ToString());
+            dialogProcessor.AddArrow();
+        }
+        #endregion
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
 			DialogResult result = colorDialog1.ShowDialog();
@@ -208,10 +227,11 @@ namespace Draw
 
         private void toolStripButton6_Click(object sender, EventArgs e)
         {
-            RhombusShape star = new RhombusShape();
+            DiamondShape star = new DiamondShape();
             dialogProcessor.ShapeList.Add(star);
             dialogProcessor.Selection = star;
             viewPort.Invalidate();
         }
+
     }
 }

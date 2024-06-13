@@ -9,11 +9,11 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Draw.src.Model
 {
-    internal class RhombusShape : Shape
+    internal class StarShape : Shape
     {
         private PointF[] points;
         #region Constructor
-        public RhombusShape()
+        public StarShape()
         {
             FillColor = Color.White;
             FillOpacity = 100;
@@ -22,7 +22,7 @@ namespace Draw.src.Model
         #endregion
         public override bool Contains(PointF point)
         {
-            if (base.Contains(point)) 
+            if (base.Contains(point))
             {
                 //contains formula for random polygons
                 bool c = false;
@@ -40,18 +40,25 @@ namespace Draw.src.Model
         }
         private void CalcPoints()
         {
-            PointF[] points1 = { new PointF(StartPoint.X + Width * (float)0.5, StartPoint.Y),
-                new PointF(StartPoint.X, StartPoint.Y + Height * (float)0.5),
-                new PointF(StartPoint.X + Width * (float)0.5, StartPoint.Y + Height),
-                new PointF(StartPoint.X + Width, StartPoint.Y + Height * (float)0.5) };
+            PointF[] points1 = { new PointF(StartPoint.X + Width * 0.5f, StartPoint.Y),
+                new PointF(StartPoint.X + Width * 0.4f, StartPoint.Y + Height * 0.4f),
+                new PointF(StartPoint.X, StartPoint.Y + Height * 0.4f),
+                new PointF(StartPoint.X + Width * 0.35f, StartPoint.Y + Height * 0.65f),
+                new PointF(StartPoint.X + Width * 0.25f, StartPoint.Y + Height),
+                new PointF(StartPoint.X + Width * 0.5f, StartPoint.Y + Height * 0.8f),
+                new PointF(StartPoint.X + Width * 0.75f, StartPoint.Y + Height),
+                new PointF(StartPoint.X + Width * 0.65f, StartPoint.Y + Height * 0.65f),
+                new PointF(StartPoint.X + Width, StartPoint.Y + Height * 0.4f),
+                new PointF(StartPoint.X + Width * 0.6f, StartPoint.Y + Height * 0.4f)
+            };
             points = points1;
         }
         public override void DrawSelf(Graphics grfx)
         {
             CalcPoints();
-            base.DrawSelf(grfx);            
             Color color = Color.FromArgb(FillOpacity, FillColor);
             grfx.FillPolygon(new SolidBrush(Color.AliceBlue), points);
+            base.DrawSelf(grfx);
         }
     }
 }

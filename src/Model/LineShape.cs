@@ -5,29 +5,11 @@ namespace Draw.src.Model
 {
     internal class LineShape : Shape
     {
-        public LineShape(RectangleF rect)
+        public LineShape()
         {
+            FillColor = Color.Red;
+            FillOpacity = 255;
         }
-
-        public LineShape(LineShape line) : base(line)
-        {
-        }
-
-        public LineShape(PointF startPoint, PointF endPoint)
-        {
-            // Изчисляване на обхващащия правоъгълник
-            float x1 = Math.Min(startPoint.X, endPoint.X);
-            float y1 = Math.Min(startPoint.Y, endPoint.Y);
-            float x2 = Math.Max(startPoint.X, endPoint.X);
-            float y2 = Math.Max(startPoint.Y, endPoint.Y);
-
-            RectangleF rect = new RectangleF(x1, y1, x2 - x1, y2 - y1);
-
-            this.Location = rect.Location;
-            this.Width = rect.Width;
-            this.Height = rect.Height;
-        }
-
         public override bool Contains(PointF point)
         {
             // Проста проверка дали точката е близо до линията
@@ -38,7 +20,7 @@ namespace Draw.src.Model
         {
             base.DrawSelf(grfx);
             // Рисуване на линията с правилните крайща
-            grfx.DrawLine(new Pen(FillColor, 3), Location, new PointF(Location.X + Width, Location.Y + Height));
+            grfx.DrawLine(new Pen(FillColor, 3), StartPoint, EndPoint);
         }
 
         private float DistancePointToLine(PointF point, PointF lineStart, PointF lineEnd)
