@@ -141,8 +141,10 @@ namespace Draw
 		}
 		public virtual bool OutlineContainsPoint(PointF point)
         {
+			Matrix matrix = Matrix.Clone();
             PointF[] points = { point };
-            Matrix.TransformPoints(points);
+			matrix.Invert();
+            matrix.TransformPoints(points);
             if (new RectangleF(Width > 0 ? StartPoint.X - 5 : StartPoint.X, Height > 0 ? StartPoint.Y - 5 : StartPoint.Y, 5, 5).Contains(points[0]))
 			{
 				CurrentSelectedSide = SelectedSide.TopLeftCorner;
@@ -190,7 +192,12 @@ namespace Draw
 		}
 		public bool RotationRectContains(PointF point) 
 		{
-			return new RectangleF(Location.X + Math.Abs(Width) / 2 - 2, Location.Y - 23, 7, 7).Contains(point);		
+            PointF[] points = { point };
+            Matrix matrix = Matrix.Clone();
+            matrix.Invert();
+            matrix.TransformPoints(points);
+            matrix.Dispose();
+            return new RectangleF(Location.X + Math.Abs(Width) / 2 - 2, Location.Y - 23, 7, 7).Contains(points[0]);		
 		}
         public virtual void DrawSelf(Graphics grfx)
 		{
@@ -208,8 +215,8 @@ namespace Draw
 				grfx.FillRectangle(Brushes.Black, Location.X + Math.Abs(Width) / 2, Location.Y - 20, 3, 20);
 				grfx.FillRectangle(Brushes.Black, Location.X + Math.Abs(Width) / 2 - 2, Location.Y - 23, 7, 7);
             }
-			//bottom
-			grfx.FillRectangle(Brushes.Blue, Width > 0 ? (EndPoint.X - Width) : EndPoint.X, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, Math.Abs(Width), 5);
+            //bottom
+            grfx.FillRectangle(Brushes.Blue, Width > 0 ? (EndPoint.X - Width) : EndPoint.X, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, Math.Abs(Width), 5);
 			//top
 			grfx.FillRectangle(Brushes.Green, Width > 0 ? StartPoint.X : (StartPoint.X + Width), Height > 0 ? StartPoint.Y - 5 : StartPoint.Y, Math.Abs(Width), 5);
 			//left

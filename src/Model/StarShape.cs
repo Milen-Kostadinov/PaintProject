@@ -27,14 +27,12 @@ namespace Draw.src.Model
         public override void DrawSelf(Graphics grfx)
         {
             base.DrawSelf(grfx);
-            PointF[] points = { new PointF(Location.X  + Width * (float)0.5, Location.Y), new PointF(Location.X, Location.Y + Location.Y * (float)0.5)};
-
+            PointF[] points = { new PointF(Location.X + Width * (float)0.5, Location.Y),
+                new PointF(Location.X, Location.Y + Height * (float)0.5),
+                new PointF(Location.X + Width * (float)0.5, Location.Y + Height),
+                new PointF(Location.X + Width, Location.Y + Height * (float)0.5)};
             Color color = Color.FromArgb(FillOpacity, FillColor);
-            grfx.FillPolygon(new SolidBrush(color), points);
-
-            color = Color.FromArgb(OutlineOpacity, OutlineColor);
-            grfx.DrawRectangle(new Pen(color, OutlineWidth), Location.X, Location.Y, this.Width, this.Height);
-
+            grfx.FillPolygon(new SolidBrush(Color.AliceBlue), points);
         }
     }
 }

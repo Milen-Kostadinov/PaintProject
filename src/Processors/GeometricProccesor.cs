@@ -13,18 +13,22 @@ namespace Draw.src.Processors
     {
         public void ExpandInDirection(PointF point)
         {
+            PointF[] points = { point };
+            Matrix matrix = Selection.Matrix.Clone();
+            matrix.Invert();
+            matrix.TransformPoints(points);
             switch (Selection.CurrentSelectedSide)
             {
-                case SelectedSide.Left: Selection.StartPoint = new PointF(point.X, Selection.StartPoint.Y); break;
-                case SelectedSide.Right: Selection.EndPoint = new PointF(point.X, Selection.EndPoint.Y); break;    
-                case SelectedSide.Top: Selection.StartPoint = new PointF (Selection.StartPoint.X, point.Y); break;
-                case SelectedSide.Bottom: Selection.EndPoint = new PointF(Selection.EndPoint.X, point.Y); break;
-                case SelectedSide.TopLeftCorner: Selection.StartPoint = point; break;
-                case SelectedSide.BottomRightCorner: Selection.EndPoint = point; break;
-                case SelectedSide.TopRightCorner: Selection.StartPoint = new PointF(Selection.StartPoint.X, point.Y);
-                                                    Selection.EndPoint = new PointF(point.X, Selection.EndPoint.Y); break;
-                case SelectedSide.BottomLeftCorner: Selection.StartPoint = new PointF(point.X, Selection.StartPoint.Y);
-                                                    Selection.EndPoint = new PointF(Selection.EndPoint.X, point.Y); break; 
+                case SelectedSide.Left: Selection.StartPoint = new PointF(points[0].X, Selection.StartPoint.Y); break;
+                case SelectedSide.Right: Selection.EndPoint = new PointF(points[0].X, Selection.EndPoint.Y); break;    
+                case SelectedSide.Top: Selection.StartPoint = new PointF (Selection.StartPoint.X, points[0].Y); break;
+                case SelectedSide.Bottom: Selection.EndPoint = new PointF(Selection.EndPoint.X, points[0].Y); break;
+                case SelectedSide.TopLeftCorner: Selection.StartPoint = points[0]; break;
+                case SelectedSide.BottomRightCorner: Selection.EndPoint = points[0]; break;
+                case SelectedSide.TopRightCorner: Selection.StartPoint = new PointF(Selection.StartPoint.X, points[0].Y);
+                                                    Selection.EndPoint = new PointF(points[0].X, Selection.EndPoint.Y); break;
+                case SelectedSide.BottomLeftCorner: Selection.StartPoint = new PointF(points[0].X, Selection.StartPoint.Y);
+                                                    Selection.EndPoint = new PointF(Selection.EndPoint.X, points[0].Y); break; 
                 default: Console.WriteLine("Selected side is null"); break;
             }
         }
@@ -38,7 +42,6 @@ namespace Draw.src.Processors
             selection.RotationPoint = new PointF(selection.Location.X + Math.Abs(selection.Width) / 2, selection.Location.Y + Math.Abs(selection.Height) / 2);
             selection.Matrix.RotateAt(angle, new PointF(selection.Location.X + Math.Abs(selection.Width) / 2, selection.Location.Y + Math.Abs(selection.Height) / 2));
             selection.LastRotationAngle = angle;
-            Console.WriteLine(angle);
         }
     }
 }

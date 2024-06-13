@@ -29,32 +29,12 @@ namespace Draw
 		{
 			dialogProcessor.ReDraw(sender, e);
 		}
-		
-		void DrawRectangleSpeedButtonClick(object sender, EventArgs e)
-		{
-            RectangleShape rect = new RectangleShape();
-            dialogProcessor.ShapeList.Add(rect);
-            dialogProcessor.Selection = rect;
-            //drawRectangleSpeedButton.Checked = true;
-			
-			statusBar.Items[0].Text = "Последно действие: Рисуване на правоъгълник";
-			
-			viewPort.Invalidate();
-        }
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            EllipseShape elipse = new EllipseShape();
-            dialogProcessor.ShapeList.Add(elipse);
-            dialogProcessor.Selection = elipse;
-            viewPort.Invalidate();
-        }
-
         void ViewPortMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-            EllipseShape elipse = new EllipseShape(new PointF(200, 200), new PointF(300, 300));
+            /*EllipseShape elipse = new EllipseShape(new PointF(200, 200), new PointF(300, 300));
             elipse.GroupId = 1;
             elipse.HasBeenInteractedWith = true;
-            dialogProcessor.ShapeList.Add(elipse);
+            dialogProcessor.ShapeList.Add(elipse);*/
             viewPort.Invalidate();
             if (dialogProcessor.Selection != null && !dialogProcessor.Selection.HasBeenInteractedWith)
             {
@@ -100,25 +80,29 @@ namespace Draw
             if (dialogProcessor.IsRotating)
             {
                 dialogProcessor.RotateShape(dialogProcessor.Selection, dialogProcessor.CalcAngle(e.Location));
+                viewPort.Invalidate();
             }
             if (dialogProcessor.IsDrawing)
             {
                 dialogProcessor.Selection.EndPoint = e.Location;
+                viewPort.Invalidate();
             }
 			if (dialogProcessor.IsSelecting) 
 			{
                 dialogProcessor.SelectionTool.EndPoint = e.Location;
 				dialogProcessor.SelectElements();
+                viewPort.Invalidate();
             }
 			if (dialogProcessor.IsResizing) 
 			{
 				dialogProcessor.ExpandInDirection(e.Location);
+                viewPort.Invalidate();
             }
 			else if (dialogProcessor.IsDragging) {
 				if (dialogProcessor.Selection != null) statusBar.Items[0].Text = "Последно действие: Влачене";
 				dialogProcessor.TranslateTo(e.Location);
+                viewPort.Invalidate();
             }
-            viewPort.Invalidate();
         }
 
 		void ViewPortMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -144,7 +128,26 @@ namespace Draw
             dialogProcessor.IsRotating = false;
             dialogProcessor.IsSelecting = false;
             viewPort.Invalidate();
-		}
+        }
+
+        void DrawRectangleSpeedButtonClick(object sender, EventArgs e)
+        {
+            dialogProcessor.AddRectangle();
+
+            statusBar.Items[0].Text = "Последно действие: Рисуване на правоъгълник";
+
+            viewPort.Invalidate();
+        }
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            dialogProcessor.AddEllipse();
+            viewPort.Invalidate();
+        }
+        private void AddStarButton_Click(object sender, EventArgs e)
+        {
+            dialogProcessor.AddStar();
+            viewPort.Invalidate();
+        }
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
             dialogProcessor.AddRandomSquare();
@@ -198,7 +201,7 @@ namespace Draw
         {        
             if (e.Control && e.Shift &&  e.KeyCode == Keys.C)
             {
-                dialogProcessor.AddRandomRectangle();
+                dialogProcessor.AddRectangle();
                 viewPort.Invalidate();
             }     
         }

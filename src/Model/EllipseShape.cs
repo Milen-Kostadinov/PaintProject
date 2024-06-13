@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Draw.src.Model
 {
@@ -36,7 +38,12 @@ namespace Draw.src.Model
         public override bool Contains(PointF point)
         {
             PointF[] points = { point };
-            Matrix.TransformPoints(points);
+            Matrix matrix = Matrix.Clone();
+            matrix.Invert();
+            matrix.TransformPoints(points);
+            matrix.Dispose();
+            /*PointF[] points = { point };
+            Matrix.TransformPoints(points);*/
             float cx = base.Location.X + Math.Abs(Width) / 2;
             float cy = base.Location.Y + Math.Abs(Height) / 2;
             float rx = Math.Abs(Width) / 2;

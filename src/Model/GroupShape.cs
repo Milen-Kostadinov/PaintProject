@@ -97,7 +97,12 @@ namespace Draw.src.Model
             }
             public override bool Contains(PointF point)
             {
-                if (new RectangleF(Location.X, Location.Y, Math.Abs(Width), Math.Abs(Height)).Contains(point))
+                PointF[] points = { point };
+                Matrix matrix = Matrix.Clone();
+                matrix.Invert();
+                matrix.TransformPoints(points);
+                matrix.Dispose();
+                if (new RectangleF(Location.X, Location.Y, Math.Abs(Width), Math.Abs(Height)).Contains(points[0]))
 
                     return true;
                 else
@@ -114,25 +119,19 @@ namespace Draw.src.Model
             public override void DrawSelf(Graphics grfx)
             {
                 base.DrawSelf(grfx);
-                Console.WriteLine(shapes.Count + " " + RotationPoint + this.GetHashCode() + " " + this.GetType());
                 for (int i = 0; i < shapes.Count; i++) 
                 {
                     shapes.ElementAt(i).StartPoint = new PointF(StartPoint.X + Width * proportions[i].StartPointProportionHorizontal, StartPoint.Y + Height * proportions[i].StartPointProportionVertical);
                     shapes.ElementAt(i).EndPoint = new PointF(EndPoint.X - Width * proportions[i].EndPointProportionHorizontal, EndPoint.Y - Height * proportions[i].EndPointProportionVerical);
 
-                    Console.WriteLine(shapes.Count + " " + RotationPoint + shapes.ElementAt(i).GetHashCode() + " " + shapes.ElementAt(i).GetType());
-
                     shapes.ElementAt(i).RotationPoint = this.RotationPoint;
                     shapes.ElementAt(i).LastRotationAngle = this.LastRotationAngle;
-                    Console.WriteLine(LastRotationAngle + " " + RotationPoint);
                     shapes.ElementAt(i).Matrix.Reset();
                     shapes.ElementAt(i).Matrix.RotateAt(LastRotationAngle, this.RotationPoint);
                     shapes.ElementAt(i).DrawSelf(grfx);
                     //Rotate(LastRotationAngle);
                     //new PointF(Location.X + Math.Abs(Width) / 2, Location.Y + Math.Abs(Height) / 2)
                 }
-
-                Console.WriteLine();
             }
         }
     }

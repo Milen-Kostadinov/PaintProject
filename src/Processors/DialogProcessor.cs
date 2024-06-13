@@ -69,27 +69,23 @@ namespace Draw
         private static int iD;
 
         #endregion
-        public void AddRandomRectangle()
+        public void AddRectangle()
         {
-            Random rnd = new Random();
-            int x = rnd.Next(100, 1000);
-            int y = rnd.Next(100, 600);
-
-            //RectangleShape rect = new RectangleShape(new Rectangle(x,y,100,200), 255);
-            //rect.FillColor = Color.White;
-
-            //ShapeList.Add(rect);
+            RectangleShape rect = new RectangleShape();
+            ShapeList.Add(rect);
+            Selection = rect;
         }
-
-        public void AddRandomEllipse()
+        public void AddEllipse()
         {
-            Random rnd = new Random();
-            int x = rnd.Next(100, 1000);
-            int y = rnd.Next(100, 600);
-            //EllipseShape ellipse = new EllipseShape(x, y);
-            //ellipse.FillColor = Color.YellowGreen;
-
-            //ShapeList.Add(ellipse);
+            EllipseShape elipse = new EllipseShape();
+            ShapeList.Add(elipse);
+            Selection = elipse;
+        }
+        public void AddStar()
+        {
+            StarShape star = new StarShape();
+            ShapeList.Add(star);
+            Selection = star;
         }
 
         public void AddRandomSquare()
@@ -156,11 +152,11 @@ namespace Draw
             shape.EndPoint = new PointF(shape.EndPoint.X + Math.Abs(points[0].X) - Math.Abs(points[1].X),
                                         shape.EndPoint.Y + Math.Abs(points[0].Y) - Math.Abs(points[1].Y));*/
 
+            RotateShape(Selection, shape.LastRotationAngle);
             shape.StartPoint = new PointF(shape.StartPoint.X + point.X - lastLocation.X,
                                         shape.StartPoint.Y + point.Y - lastLocation.Y);
             shape.EndPoint = new PointF(shape.EndPoint.X + point.X - lastLocation.X,
                                         shape.EndPoint.Y + point.Y - lastLocation.Y);
-            RotateShape(Selection, shape.LastRotationAngle);
         }
         public void TranslateTo(PointF point)
         {
