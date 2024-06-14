@@ -50,10 +50,10 @@ namespace Draw.src.Model
         }
         public override void DrawSelf(Graphics grfx)
         {
+            base.DrawSelf(grfx);
             CalcPoints();
             Color color = Color.FromArgb(FillOpacity, FillColor);
             grfx.FillPolygon(new SolidBrush(Color.AliceBlue), points);
-            base.DrawSelf(grfx);
         }
     }
 }

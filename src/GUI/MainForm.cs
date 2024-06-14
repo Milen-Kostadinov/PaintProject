@@ -44,35 +44,40 @@ namespace Draw
                 return;
             }
             if (pickUpSpeedButton.Checked) {
-                if (dialogProcessor.Selection != null && dialogProcessor.Selection.RotationRectContains(e.Location)) 
+                if (dialogProcessor.Selection != null && dialogProcessor.Selection.RotationRectContains(dialogProcessor.RotatePointInShapePlane(e.Location, dialogProcessor.Selection))) 
                 {
                     dialogProcessor.IsRotating = true;
                     return;
                 }
-                if (dialogProcessor.Selection != null && dialogProcessor.Selection.OutlineContainsPoint(e.Location)) 
+                if (dialogProcessor.Selection != null && dialogProcessor.Selection.OutlineContainsPoint(dialogProcessor.RotatePointInShapePlane(e.Location, dialogProcessor.Selection))) 
 				{
                     dialogProcessor.IsResizing = true;
                     return;
                 }
-                if (dialogProcessor.ContainsPoint(e.Location) == null && dialogProcessor.Selection != null) 
+                if ((dialogProcessor.ContainsPoint(e.Location) == null && dialogProcessor.Selection != null) || (dialogProcessor.ContainsPoint(e.Location) != dialogProcessor.Selection)) 
                 {
                     dialogProcessor.Selection.IsSelected = false;
                 }
+                if (dialogProcessor.ContainsPoint(e.Location) == null && dialogProcessor.Selection.GetType().Name.Equals("SelectionShape"))
+                {
+                    dialogProcessor.DisbandSelection();
+                }
                 dialogProcessor.Selection = dialogProcessor.ContainsPoint(e.Location);
-				if (dialogProcessor.Selection != null) {
+                if(dialogProcessor.Selection == null)
+                {
+                    dialogProcessor.IsSelecting = true;
+                    dialogProcessor.SelectionTool.StartPoint = e.Location;
+                    dialogProcessor.SelectionTool.EndPoint = e.Location;
+                    dialogProcessor.ShapeList.Add(dialogProcessor.SelectionTool);
+                }
+				if (dialogProcessor.Selection != null)
+                {
                     dialogProcessor.Selection.IsSelected = true;                  
 					statusBar.Items[0].Text = "Последно действие: Селекция на примитив";
 					dialogProcessor.IsDragging = true;
 					dialogProcessor.LastLocation = e.Location;
-                    viewPort.Invalidate();
 				}
             }
-			if (GroupButon.Checked) 
-			{
-				dialogProcessor.IsSelecting = true;
-				dialogProcessor.SelectionTool.StartPoint = e.Location;
-                dialogProcessor.ShapeList.Add(dialogProcessor.SelectionTool);
-			}
         }
 
 		void ViewPortMouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -115,8 +120,9 @@ namespace Draw
             }
             if (dialogProcessor.IsSelecting)
             {
-                dialogProcessor.Selection = dialogProcessor.CreateGroup();
+                dialogProcessor.Selection = dialogProcessor.CreateSelection();
 				dialogProcessor.ShapeList.Remove(dialogProcessor.SelectionTool);
+                viewPort.Invalidate();
             }
             if (dialogProcessor.IsResizing)
             {
@@ -132,50 +138,44 @@ namespace Draw
         #region AddShapeButtons
         private void rectangleButton_Click(object sender, EventArgs e)
         {
-            dialogProcessor.AddRectangle();
+            dialogProcessor.AddShape(ShapesEnum.Rectangle);
             statusBar.Items[0].Text = "Последно действие: Рисуване на правоъгълник";
         }
-
         private void elipseButton_Click(object sender, EventArgs e)
         {
-            dialogProcessor.AddEllipse();
+            dialogProcessor.AddShape(ShapesEnum.Ellipse);
         }
-
         private void sametriangleButton_Click(object sender, EventArgs e)
         {
-            dialogProcessor.AddIsoscelesTriangle();
+            dialogProcessor.AddShape(ShapesEnum.IsoscelesTriangle);
         }
-
         private void rightTriangleButton_Click(object sender, EventArgs e)
         {
-            dialogProcessor.AddRightTriangle();
+            dialogProcessor.AddShape(ShapesEnum.RrightTriangle);
         }
-
         private void diamondButton_Click(object sender, EventArgs e)
         {
-            dialogProcessor.AddDiamond();
+            dialogProcessor.AddShape(ShapesEnum.Diamond);
         }
         private void lineButton_Click(object sender, EventArgs e)
         {
-            dialogProcessor.AddLineLine();
+            dialogProcessor.AddShape(ShapesEnum.Line);
         }
         private void pentagonButton_Click(object sender, EventArgs e)
         {
-            dialogProcessor.AddPentagon();
+            dialogProcessor.AddShape(ShapesEnum.Pentagon);
         }
         private void hexagonButton_Click(object sender, EventArgs e)
         {
-            dialogProcessor.AddHexagon();
+            dialogProcessor.AddShape(ShapesEnum.Hexagon);
         }
         private void starButton_Click(object sender, EventArgs e)
         {
-            dialogProcessor.AddStar();
+            dialogProcessor.AddShape(ShapesEnum.Star);
         }
         private void arrowButton_Click(object sender, EventArgs e)
         {
-            Console.WriteLine(
-            sender.ToString());
-            dialogProcessor.AddArrow();
+            dialogProcessor.AddShape(ShapesEnum.Arrow);
         }
         #endregion
         private void toolStripButton4_Click(object sender, EventArgs e)
@@ -220,7 +220,7 @@ namespace Draw
         {        
             if (e.Control && e.Shift &&  e.KeyCode == Keys.C)
             {
-                dialogProcessor.AddRectangle();
+                dialogProcessor.AddShape(ShapesEnum.RrightTriangle);
                 viewPort.Invalidate();
             }     
         }

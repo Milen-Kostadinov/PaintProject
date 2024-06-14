@@ -11,8 +11,9 @@ namespace Draw.src.Processors
     {
         public SelectionTool()
         {
+            HasBeenInteractedWith = true;
         }
-        public bool Contains(Shape shape) 
+        public bool Contains(Shape shape)
         {
             RectangleF rect = new RectangleF(StartPoint.X < EndPoint.X ? StartPoint.X : EndPoint.X,
                         StartPoint.Y < EndPoint.Y ? StartPoint.Y : EndPoint.Y,
@@ -22,6 +23,8 @@ namespace Draw.src.Processors
             if (rect.X < shape.Location.X && rect.X + rect.Width > shape.Location.X
                 && (rect.Y > shape.Location.Y && rect.Y < shape.Location.Y + shape.Height
                 || rect.Y + rect.Height > shape.Location.Y && rect.Y + rect.Height < shape.Location.Y + shape.Height))
+
+
             {
                 return true;
             }
@@ -41,7 +44,7 @@ namespace Draw.src.Processors
             }
             //check bottom wall
             if (rect.Y < shape.Location.Y + shape.Height && rect.Y + rect.Height > shape.Location.Y + shape.Height
-                &&(rect.X > shape.Location.X && rect.X < shape.Location.X + shape.Width 
+                && (rect.X > shape.Location.X && rect.X < shape.Location.X + shape.Width
                 || rect.X + rect.Width > shape.Location.X && rect.X + rect.Width < shape.Location.X + shape.Width))
             {
                 return true;

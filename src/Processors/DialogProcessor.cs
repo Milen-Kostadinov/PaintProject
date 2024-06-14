@@ -66,68 +66,27 @@ namespace Draw
             get { return selectionTool; }
             set { selectionTool = value; }
         }
-        private static int iD;
-
         #endregion
-        public void AddRectangle()
+        public void AddShape(ShapesEnum shapeClass)
         {
-            RectangleShape rect = new RectangleShape();
-            ShapeList.Add(rect);
-            Selection = rect;
-        }
-        public void AddEllipse()
-        {
-            EllipseShape elipse = new EllipseShape();
-            ShapeList.Add(elipse);
-            Selection = elipse;
-        }
-        public void AddDiamond()
-        {
-            DiamondShape diamond = new DiamondShape();
-            ShapeList.Add(diamond);
-            Selection = diamond;
-        }
-        public void AddIsoscelesTriangle()
-        {
-            IsoscelesTriangleShape triangle = new IsoscelesTriangleShape();
-            ShapeList.Add(triangle);
-            Selection = triangle;
-        }
-        public void AddRightTriangle()
-        {
-            RightTriangleShape triangle = new RightTriangleShape();
-            ShapeList.Add(triangle);
-            Selection = triangle;
-        }
-        public void AddLineLine()
-        {
-            LineShape line = new LineShape();
-            ShapeList.Add(line);
-            Selection = line;
-        }
-        public void AddPentagon()
-        {
-            PentagonShape pentagon = new PentagonShape();
-            ShapeList.Add(pentagon);
-            Selection = pentagon;
-        }
-        public void AddHexagon()
-        {
-            HexagonShape hexagon = new HexagonShape();
-            ShapeList.Add(hexagon);
-            Selection = hexagon;
-        }
-        public void AddStar()
-        {
-            StarShape star = new StarShape();
-            ShapeList.Add(star);
-            Selection = star;
-        }
-        public void AddArrow()
-        {
-            ArrowShape arrow = new ArrowShape();
-            ShapeList.Add(arrow);
-            Selection = arrow;
+            if (Selection != null) Selection.IsSelected = false;
+            Shape shape;
+            switch (shapeClass) 
+            {
+                case ShapesEnum.Star: shape = new StarShape(); break;
+                case ShapesEnum.Arrow: shape = new ArrowShape(); break;
+                case ShapesEnum.Rectangle: shape = new RectangleShape(); break;
+                case ShapesEnum.Ellipse: shape = new EllipseShape(); break; 
+                case ShapesEnum.Line: shape = new LineShape(); break;
+                case ShapesEnum.IsoscelesTriangle: shape = new IsoscelesTriangleShape(); break;
+                case ShapesEnum.RrightTriangle: shape = new RightTriangleShape(); break;
+                case ShapesEnum.Hexagon: shape = new HexagonShape(); break;
+                case ShapesEnum.Pentagon: shape = new PentagonShape(); break;
+                case ShapesEnum.Diamond: shape = new DiamondShape(); break;
+                default: shape = null; break;
+            }
+            ShapeList.Add(shape);
+            Selection = shape;
         }
         public Shape ContainsPoint(PointF point)
         {
@@ -146,7 +105,7 @@ namespace Draw
         {
             for (int i = 0; i < ShapeList.Count; i++)
             {
-                if (ShapeList[i].OutlineContainsPoint(point))
+                if (ShapeList[i].OutlineContainsPoint(RotatePointInShapePlane(point, ShapeList[i])))
                 {
                     return true;
                 }
@@ -160,16 +119,16 @@ namespace Draw
             Matrix matrix = new Matrix();
             matrix.Rotate(90);
             matrix.TransformPoints(points);
-            Console.WriteLine(points[0] + " " + points[1]);*/
+            Console.WriteLine(point + " " + points[1]);*/
 
 
             /*PointF[] points = { point, lastLocation };
             shape.Matrix.TransformPoints(points);*/
 
-            /*shape.StartPoint = new PointF(shape.StartPoint.X + Math.Abs(points[0].X) - Math.Abs(points[1].X),
-                                        shape.StartPoint.Y + Math.Abs(points[0].Y) - Math.Abs(points[1].Y));
-            shape.EndPoint = new PointF(shape.EndPoint.X + Math.Abs(points[0].X) - Math.Abs(points[1].X),
-                                        shape.EndPoint.Y + Math.Abs(points[0].Y) - Math.Abs(points[1].Y));*/
+            /*shape.StartPoint = new PointF(shape.StartPoint.X + Math.Abs(point.X) - Math.Abs(points[1].X),
+                                        shape.StartPoint.Y + Math.Abs(point.Y) - Math.Abs(points[1].Y));
+            shape.EndPoint = new PointF(shape.EndPoint.X + Math.Abs(point.X) - Math.Abs(points[1].X),
+                                        shape.EndPoint.Y + Math.Abs(point.Y) - Math.Abs(points[1].Y));*/
 
             RotateShape(Selection, shape.LastRotationAngle);
             shape.StartPoint = new PointF(shape.StartPoint.X + point.X - lastLocation.X,
@@ -199,23 +158,50 @@ namespace Draw
 
             foreach (Shape shape in ShapeList)
             {
-
                 if (SelectionTool.Contains(shape) && shape != SelectionTool)
                 {
+                    shape.IsSelected = true;
                     shapes.Add(shape);
                 }
             }
             GroupShape group = new GroupShape(shapes);
-            if(shapes.Count > 0)
+            if(shapes.Count > 1)
             {
                 ShapeList.Add(group);
-            }
-
-            foreach (Shape shape in shapes)
-            {
-                ShapeList.Remove(shape);
+                foreach (Shape shape in shapes)
+                {
+                    ShapeList.Remove(shape);
+                }
             }
             return group;
+        }
+        public Shape CreateSelection()
+        {
+            List<Shape> shapes = new List<Shape>();
+
+            foreach (Shape shape in ShapeList)
+            {
+                if (SelectionTool.Contains(shape) && shape != SelectionTool)
+                {
+                    shape.IsSelected = true;
+                    shapes.Add(shape);
+                }
+            }
+            SelectionShape selection = new SelectionShape(shapes);
+            if (shapes.Count > 1)
+            {
+                ShapeList.Add(selection);
+                foreach (Shape shape in shapes)
+                {
+                    ShapeList.Remove(shape);
+                }
+            }
+            return selection;
+        }
+        public void DisbandSelection() 
+        {
+            Selection.GetShapes().ForEach(shape => { ShapeList.Add(shape); shape.IsSelected = false; });
+            ShapeList.Remove(Selection);
         }
         public PointF RotatePointInShapePlane(PointF point, Shape shape) 
         {

@@ -103,14 +103,18 @@ namespace Draw.src.Model
                 else
                     return false;
             }
-           /* public override void Rotate(float angle)
+            /* public override void Rotate(float angle)
+             {
+                 base.Rotate(angle);
+                 foreach (Shape shape in shapes) 
+                 {
+                     shape.Matrix.RotateAt(angle - LastRotationAngle, new PointF(Location.X + Math.Abs(Width) / 2, Location.Y + Math.Abs(Height) / 2));
+                 }
+             }*/
+            public override List<Shape> GetShapes()
             {
-                base.Rotate(angle);
-                foreach (Shape shape in shapes) 
-                {
-                    shape.Matrix.RotateAt(angle - LastRotationAngle, new PointF(Location.X + Math.Abs(Width) / 2, Location.Y + Math.Abs(Height) / 2));
-                }
-            }*/
+                return shapes;
+            }
             public override void DrawSelf(Graphics grfx)
             {
                 base.DrawSelf(grfx);
@@ -119,10 +123,10 @@ namespace Draw.src.Model
                     shapes.ElementAt(i).StartPoint = new PointF(StartPoint.X + Width * proportions[i].StartPointProportionHorizontal, StartPoint.Y + Height * proportions[i].StartPointProportionVertical);
                     shapes.ElementAt(i).EndPoint = new PointF(EndPoint.X - Width * proportions[i].EndPointProportionHorizontal, EndPoint.Y - Height * proportions[i].EndPointProportionVerical);
 
-                    shapes.ElementAt(i).RotationPoint = this.RotationPoint;
+                    shapes.ElementAt(i).RotationPoint = RotationPoint;
                     shapes.ElementAt(i).LastRotationAngle = this.LastRotationAngle;
                     shapes.ElementAt(i).Matrix.Reset();
-                    shapes.ElementAt(i).Matrix.RotateAt(LastRotationAngle, this.RotationPoint);
+                    shapes.ElementAt(i).Matrix.RotateAt(LastRotationAngle, RotationPoint);
                     shapes.ElementAt(i).DrawSelf(grfx);
                     //Rotate(LastRotationAngle);
                     //new PointF(Location.X + Math.Abs(Width) / 2, Location.Y + Math.Abs(Height) / 2)
