@@ -125,14 +125,16 @@ namespace Draw.src.Model
         }
         public override void DrawSelf(Graphics grfx)
         {
-            Color color = Color.FromArgb(Opacity, FillColor);
             for (int i = 0; i < shapes.Count; i++)
             {
                 shapes.ElementAt(i).StartPoint = new PointF(StartPoint.X + proportions[i].StartPointProportionHorizontal, StartPoint.Y + proportions[i].StartPointProportionVertical);
                 shapes.ElementAt(i).EndPoint = new PointF(EndPoint.X - proportions[i].EndPointProportionHorizontal, EndPoint.Y - proportions[i].EndPointProportionVerical);
+                Color color = Color.FromArgb(Opacity, FillColor);
                 shapes.ElementAt(i).FillColor = color;
+                color = Color.FromArgb(Opacity, OutlineColor);
+                shapes.ElementAt(i).OutlineColor = color;
                 shapes.ElementAt(i).RotationPoint = new PointF(shapes.ElementAt(i).Location.X + shapes.ElementAt(i).Width / 2, shapes.ElementAt(i).Location.Y + shapes.ElementAt(i).Height / 2);
-                shapes.ElementAt(i).LastRotationAngle = this.LastRotationAngle;
+                shapes.ElementAt(i).LastRotationAngle = shapes.ElementAt(i).LastRotationAngle;
                 shapes.ElementAt(i).IsSelected = true;
                 shapes.ElementAt(i).Matrix.Reset();
                 shapes.ElementAt(i).Matrix.RotateAt(LastRotationAngle, RotationPoint);

@@ -53,7 +53,8 @@ namespace Draw.src.Model
 
             Color color = Color.FromArgb(Opacity, FillColor);
             grfx.FillEllipse(new SolidBrush(color), Location.X, Location.Y, Math.Abs(Width), Math.Abs(Height));
-            grfx.DrawEllipse(Pens.Black, Location.X, Location.Y, Math.Abs(Width), Math.Abs(Height));
+            color = Color.FromArgb(Opacity, OutlineColor);
+            grfx.DrawEllipse(new Pen(color, OutlineWidth), Location.X, Location.Y, Math.Abs(Width), Math.Abs(Height));
         }
         
     }

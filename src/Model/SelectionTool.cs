@@ -59,7 +59,7 @@ namespace Draw.src.Processors
         public override void DrawSelf(Graphics grfx)
         {
             base.DrawSelf(grfx);
-            grfx.DrawRectangle(new Pen(Color.Black, 3), Location.X, Location.Y, Width, Height);
+            grfx.DrawRectangle(new Pen(Color.Black, 2), Location.X, Location.Y, Math.Abs(Width), Math.Abs(Height));
         }
     }
 }

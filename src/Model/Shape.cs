@@ -202,7 +202,7 @@ namespace Draw
 				grfx.FillRectangle(Brushes.Black, Location.X + Math.Abs(Width) / 2, Location.Y - 20, 3, 20);
 				grfx.FillRectangle(Brushes.Black, Location.X + Math.Abs(Width) / 2 - 2, Location.Y - 23, 7, 7);
             }
-            //bottom
+           /* //bottom
             grfx.FillRectangle(Brushes.Blue, Width > 0 ? (EndPoint.X - Width) : EndPoint.X, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, Math.Abs(Width), 5);
 			//top
 			grfx.FillRectangle(Brushes.Green, Width > 0 ? StartPoint.X : (StartPoint.X + Width), Height > 0 ? StartPoint.Y - 5 : StartPoint.Y, Math.Abs(Width), 5);
@@ -217,7 +217,7 @@ namespace Draw
 			//bottom left
 			grfx.FillRectangle(Brushes.Gray, Width > 0 ? StartPoint.X - 5 : StartPoint.X, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, 5, 5);
 			//bottom right
-			grfx.FillRectangle(Brushes.Tomato, Width > 0 ? EndPoint.X : EndPoint.X - 5, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, 5, 5);
+			grfx.FillRectangle(Brushes.Tomato, Width > 0 ? EndPoint.X : EndPoint.X - 5, Height > 0 ? EndPoint.Y : EndPoint.Y - 5, 5, 5);*/
 		}
     }
 }

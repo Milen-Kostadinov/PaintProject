@@ -10,6 +10,7 @@ namespace Draw
 	public partial class MainForm : Form
 	{
         ToolStripButton button;
+        int outlineWidth = 3;
 
         private DialogProcessor dialogProcessor = new DialogProcessor();
 		
@@ -17,7 +18,9 @@ namespace Draw
 		{
 			InitializeComponent();
 
-            button = Black;
+            button = White;
+            fillColor.BackColor = Color.White;
+            outlineColor.BackColor = Color.Black;
 
             //
             // TODO: Add constructor code after the InitializeComponent() call.
@@ -44,8 +47,9 @@ namespace Draw
             {
                 dialogProcessor.Selection.StartPoint = e.Location;
                 dialogProcessor.Selection.EndPoint = e.Location;
-                Enum.TryParse(button.Name, out ColorsEnum color);
-                dialogProcessor.Selection.FillColor = dialogProcessor.CreateColor(color);
+                dialogProcessor.Selection.FillColor = fillColor.BackColor;
+                dialogProcessor.Selection.OutlineColor = outlineColor.BackColor;
+                dialogProcessor.Selection.OutlineWidth = outlineWidth;
                 dialogProcessor.IsDrawing = true;
                 return;
             }
@@ -64,7 +68,7 @@ namespace Draw
                 {
                     dialogProcessor.Selection.IsSelected = false;
                 }
-                if (dialogProcessor.ContainsPoint(e.Location) == null && dialogProcessor.Selection.GetType().Name.Equals("SelectionShape"))
+                if (dialogProcessor.ContainsPoint(e.Location) == null && dialogProcessor.Selection != null&& dialogProcessor.Selection.GetType().Name.Equals("SelectionShape"))
                 {
                     dialogProcessor.DisbandSelection();
                 }
@@ -86,8 +90,8 @@ namespace Draw
             }
             if (paintBucket.Checked && dialogProcessor.ContainsPoint(e.Location) != null)
             {
-                Enum.TryParse(button.Name, out ColorsEnum color);
-                dialogProcessor.ContainsPoint(e.Location).FillColor = dialogProcessor.CreateColor(color);
+                dialogProcessor.ContainsPoint(e.Location).FillColor = fillColor.BackColor;
+                dialogProcessor.ContainsPoint(e.Location).OutlineColor = outlineColor.BackColor;
             }
             if (colorPickTool.Checked) 
             {
@@ -96,6 +100,7 @@ namespace Draw
                     Enum.TryParse(button.Name, out ColorsEnum color);
                     if ( dialogProcessor.CreateColor(color) == dialogProcessor.ContainsPoint(e.Location).FillColor) 
                     {
+                        outlineColor.BackColor = dialogProcessor.CreateColor(color);
                         button.Checked = true;
                         this.button.Checked = false;
                         this.button = button;
@@ -107,6 +112,10 @@ namespace Draw
         }
         void ViewPortMouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
+            if (!dialogProcessor.IsResizing && dialogProcessor.Selection != null && dialogProcessor.Selection.OutlineContainsPoint(e.Location))
+            {
+                changeCursor();
+            }
             if (dialogProcessor.IsRotating)
             {
                 dialogProcessor.RotateShape(dialogProcessor.Selection, dialogProcessor.CalcAngle(e.Location));
@@ -125,6 +134,7 @@ namespace Draw
             }
 			if (dialogProcessor.IsResizing) 
 			{
+                changeCursor();
 				dialogProcessor.ExpandInDirection(e.Location);
                 viewPort.Invalidate();
             }
@@ -135,6 +145,26 @@ namespace Draw
             }
         }
 
+        public void changeCursor()
+        {
+            if (dialogProcessor.Selection.CurrentSelectedSide == SelectedSide.Left || dialogProcessor.Selection.CurrentSelectedSide == SelectedSide.Right)
+            {
+                Cursor.Current = Cursors.SizeWE;
+            }
+            if (dialogProcessor.Selection.CurrentSelectedSide == SelectedSide.Top || dialogProcessor.Selection.CurrentSelectedSide == SelectedSide.Bottom)
+            {
+                Cursor.Current = Cursors.SizeNS;
+            }
+            if (dialogProcessor.Selection.CurrentSelectedSide == SelectedSide.TopLeftCorner || dialogProcessor.Selection.CurrentSelectedSide == SelectedSide.BottomRightCorner)
+            {
+                Cursor.Current = Cursors.SizeNWSE;
+            }
+            if (dialogProcessor.Selection.CurrentSelectedSide == SelectedSide.TopRightCorner || dialogProcessor.Selection.CurrentSelectedSide == SelectedSide.BottomLeftCorner)
+            {
+                Cursor.Current = Cursors.SizeNESW;
+            }
+
+        }
 		void ViewPortMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
             if (dialogProcessor.IsDrawing)
@@ -213,43 +243,6 @@ namespace Draw
             dialogProcessor.AddShape(ShapesEnum.Arrow, color);
         }
         #endregion
-        private void toolStripButton4_Click(object sender, EventArgs e)
-        {
-			DialogResult result = colorDialog1.ShowDialog();
-			if (result == DialogResult.OK) 
-			{
-				if (dialogProcessor.Selection != null) 
-				{
-                    dialogProcessor.Selection.FillColor = colorDialog1.Color;
-                }
-				viewPort.Invalidate();
-			}
-        }
-        private void trackBar1_ValueChanged_1(object sender, EventArgs e)
-        {
-            dialogProcessor.Selection.Opacity = trackBar1.Value;
-            valueLabel.Text = trackBar1.Value.ToString();
-            viewPort.Invalidate();
-        }
-
-        private void toolStripButton5_Click(object sender, EventArgs e)
-        {
-            DialogResult result = colorDialog2.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                if (dialogProcessor.Selection != null)
-                {
-                    dialogProcessor.Selection.OutlineColor = colorDialog2.Color;
-                }
-                viewPort.Invalidate();
-            }
-        }
-
-        private void trackBar2_ValueChanged(object sender, EventArgs e)
-        {
-            valueLabel.Text = trackBar2.Value.ToString();
-            viewPort.Invalidate();
-        }
         private void viewPort_KeyDown(object sender, KeyEventArgs e)
         {        
             if (e.Control && e.Shift &&  e.KeyCode == Keys.C)
@@ -259,22 +252,26 @@ namespace Draw
                 viewPort.Invalidate();
             }     
         }
-
-        private void toolStripButton6_Click(object sender, EventArgs e)
-        {
-            DiamondShape star = new DiamondShape();
-            dialogProcessor.ShapeList.Add(star);
-            dialogProcessor.Selection = star;
-            viewPort.Invalidate();
-        }
         private void ChooseColor(object sender, EventArgs e)
         {
             ToolStripButton temp = (ToolStripButton)sender;
             if (temp.Name.Equals(button.Name)) { temp.Checked = true; return; }
             button.Checked = false;
-            button = (ToolStripButton)sender;
+            Enum.TryParse(temp.Name, out ColorsEnum color);
+            outlineColor.BackColor = dialogProcessor.CreateColor(color);
+            button = temp;
+            viewPort.Invalidate();
         }
-
+        private void ChooseFillColor(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ToolStripButton temp = (ToolStripButton)sender;
+                Console.WriteLine(temp.Name);
+                Enum.TryParse(temp.Name, out ColorsEnum color);
+                fillColor.BackColor = dialogProcessor.CreateColor(color);
+            }
+        }
         private void mouseButton_Click(object sender, EventArgs e)
         {
             mouseButton.Checked = true;
@@ -294,6 +291,17 @@ namespace Draw
             colorPickTool.Checked = true;
             mouseButton.Checked = false;
             paintBucket.Checked = false;
+        }
+
+        private void toolStrip4_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            var size = e.ClickedItem.Text;
+            Console.WriteLine(size);
+        }
+
+        private void toolStripButton4_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            outlineWidth = int.Parse(e.ClickedItem.Text.Substring(0,1));
         }
     }
 }

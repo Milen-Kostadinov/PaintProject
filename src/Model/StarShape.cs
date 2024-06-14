@@ -57,6 +57,8 @@ namespace Draw.src.Model
             CalcPoints();
             Color color = Color.FromArgb(Opacity, FillColor);
             grfx.FillPolygon(new SolidBrush(color), points);
+            color = Color.FromArgb(Opacity, OutlineColor);
+            grfx.DrawPolygon(new Pen(color, OutlineWidth), points);
         }
     }
 }
