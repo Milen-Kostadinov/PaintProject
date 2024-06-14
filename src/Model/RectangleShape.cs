@@ -9,8 +9,6 @@ namespace Draw
 		#region Constructor
         public RectangleShape()
         {
-			FillColor = Color.White;
-			FillOpacity = 100;
         }
 
         #endregion
@@ -25,10 +23,10 @@ namespace Draw
 		{
 			base.DrawSelf(grfx);
 
-			Color color = Color.FromArgb(FillOpacity, FillColor);
+			Color color = Color.FromArgb(Opacity, FillColor);
             grfx.FillRectangle(new SolidBrush(color),Location.X, Location.Y, Math.Abs(Width), Math.Abs(Height));
 
-			color = Color.FromArgb(OutlineOpacity, OutlineColor);
+			color = Color.FromArgb(Opacity, OutlineColor);
 			grfx.DrawRectangle(new Pen(color, OutlineWidth),Location.X, Location.Y, this.Width, this.Height);
 			
 		}

@@ -71,23 +71,17 @@ namespace Draw
             get { return rotationPoint; }
             set { rotationPoint = value; }
         }
-        private int fillOpacity;
-		public virtual int FillOpacity
+        private int opacity = 255;
+		public virtual int Opacity
 		{
-			get { return fillOpacity; }
-			set { fillOpacity = value; }
+			get { return opacity; }
+			set { opacity = value; }
 		}
 		public Color outlineColor;
 		public virtual Color OutlineColor
 		{
 			get { return outlineColor; }
 			set { outlineColor = value; }
-		}
-		private int outlineOpacity;
-		public virtual int OutlineOpacity
-		{
-			get { return outlineOpacity; }
-			set { outlineOpacity = value; }
 		}
 		private int outlineWidth;
 		public virtual int OutlineWidth

@@ -67,7 +67,7 @@ namespace Draw
             set { selectionTool = value; }
         }
         #endregion
-        public void AddShape(ShapesEnum shapeClass)
+        public void AddShape(ShapesEnum shapeClass, ColorsEnum color)
         {
             if (Selection != null) Selection.IsSelected = false;
             Shape shape;
@@ -85,6 +85,7 @@ namespace Draw
                 case ShapesEnum.Diamond: shape = new DiamondShape(); break;
                 default: shape = null; break;
             }
+            shape.FillColor = CreateColor(color);
             ShapeList.Add(shape);
             Selection = shape;
         }
@@ -94,12 +95,37 @@ namespace Draw
             {
                 if (ShapeList[i].Contains(RotatePointInShapePlane(point, ShapeList[i])))
                 {
-                    ShapeList[i].FillColor = Color.Red;
-
                     return ShapeList[i];
                 }
             }
             return null;
+        }
+        public Color CreateColor(ColorsEnum color)
+        {
+            switch (color)
+            {
+                case ColorsEnum.White: return Color.White;  
+                case ColorsEnum.Gray: return Color.FromArgb(-8421505);
+                case ColorsEnum.Red: return Color.FromArgb(-7864299);
+                case ColorsEnum.Orange: return Color.FromArgb(-1237980);
+                case ColorsEnum.LightOrange: return Color.FromArgb(-32985);
+                case ColorsEnum.Yellow: return Color.FromArgb(-3584);
+                case ColorsEnum.Green: return Color.FromArgb(-14503604);
+                case ColorsEnum.LightBlue: return Color.FromArgb(-16735512);
+                case ColorsEnum.Blue: return Color.FromArgb(-12629812);
+                case ColorsEnum.Purple: return Color.FromArgb(-6078556);
+                case ColorsEnum.Black: return Color.Black;
+                case ColorsEnum.LightGray: return Color.FromArgb(-3947581);
+                case ColorsEnum.Brown: return Color.FromArgb(-4621737);
+                case ColorsEnum.Pink: return Color.FromArgb(-20791);
+                case ColorsEnum.Yellow2: return Color.FromArgb(-14066);
+                case ColorsEnum.Eggshell: return Color.FromArgb(-1055568);
+                case ColorsEnum.Lime: return Color.FromArgb(-4856291);
+                case ColorsEnum.PaleBlue: return Color.FromArgb(-6694422);
+                case ColorsEnum.Cyan: return Color.FromArgb(-9399618);
+                case ColorsEnum.LightPurple: return Color.FromArgb(-3620889);
+                default: return Color.Red;
+            }
         }
         public bool OutlineContainsPoint(PointF point)
         {

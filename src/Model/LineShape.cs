@@ -7,8 +7,6 @@ namespace Draw.src.Model
     {
         public LineShape()
         {
-            FillColor = Color.Red;
-            FillOpacity = 255;
         }
         public override bool Contains(PointF point)
         {
@@ -19,8 +17,9 @@ namespace Draw.src.Model
         public override void DrawSelf(Graphics grfx)
         {
             base.DrawSelf(grfx);
+            Color color = Color.FromArgb(Opacity, FillColor);
             // Рисуване на линията с правилните крайща
-            grfx.DrawLine(new Pen(FillColor, 3), StartPoint, EndPoint);
+            grfx.DrawLine(new Pen(color, 3), StartPoint, EndPoint);
         }
 
         private float DistancePointToLine(PointF point, PointF lineStart, PointF lineEnd)

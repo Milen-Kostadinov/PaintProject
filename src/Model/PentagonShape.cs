@@ -15,8 +15,6 @@ namespace Draw.src.Model
         #region Constructor
         public PentagonShape()
         {
-            FillColor = Color.White;
-            FillOpacity = 100;
         }
 
         #endregion
@@ -52,8 +50,8 @@ namespace Draw.src.Model
         {
             base.DrawSelf(grfx);
             CalcPoints();
-            Color color = Color.FromArgb(FillOpacity, FillColor);
-            grfx.FillPolygon(new SolidBrush(Color.AliceBlue), points);
+            Color color = Color.FromArgb(Opacity, FillColor);
+            grfx.FillPolygon(new SolidBrush(color), points);
         }
     }
 }

@@ -16,8 +16,6 @@ namespace Draw.src.Model
         {
             StartPoint = startPoint;
             EndPoint = endPoint;
-            FillColor = Color.Red;
-            FillOpacity = 255;
         }
 
         public EllipseShape(PointF startPoint, float height, float width)
@@ -29,8 +27,6 @@ namespace Draw.src.Model
 
         public EllipseShape()
         {
-            FillColor = Color.White;
-            FillOpacity = 255;
         }
 
         #endregion
@@ -55,7 +51,8 @@ namespace Draw.src.Model
         {
             base.DrawSelf(grfx);
 
-            grfx.FillEllipse(new SolidBrush(FillColor), Location.X, Location.Y, Math.Abs(Width), Math.Abs(Height));
+            Color color = Color.FromArgb(Opacity, FillColor);
+            grfx.FillEllipse(new SolidBrush(color), Location.X, Location.Y, Math.Abs(Width), Math.Abs(Height));
             grfx.DrawEllipse(Pens.Black, Location.X, Location.Y, Math.Abs(Width), Math.Abs(Height));
         }
         

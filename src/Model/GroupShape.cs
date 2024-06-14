@@ -117,12 +117,13 @@ namespace Draw.src.Model
             }
             public override void DrawSelf(Graphics grfx)
             {
+                Color color = Color.FromArgb(Opacity, FillColor);
                 base.DrawSelf(grfx);
                 for (int i = 0; i < shapes.Count; i++) 
                 {
                     shapes.ElementAt(i).StartPoint = new PointF(StartPoint.X + Width * proportions[i].StartPointProportionHorizontal, StartPoint.Y + Height * proportions[i].StartPointProportionVertical);
                     shapes.ElementAt(i).EndPoint = new PointF(EndPoint.X - Width * proportions[i].EndPointProportionHorizontal, EndPoint.Y - Height * proportions[i].EndPointProportionVerical);
-
+                    shapes.ElementAt(i).FillColor = color;
                     shapes.ElementAt(i).RotationPoint = RotationPoint;
                     shapes.ElementAt(i).LastRotationAngle = this.LastRotationAngle;
                     shapes.ElementAt(i).Matrix.Reset();
