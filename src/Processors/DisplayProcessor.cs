@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
+using Draw.src.Processors;
 
 namespace Draw
 {
@@ -34,6 +35,17 @@ namespace Draw
         {
             get { return selection; }
             set { selection = value; }
+        }
+        private Shape copyShape;
+        public Shape CopyShape
+        {
+            get { return copyShape; }
+            set { copyShape = value; }
+        }
+		private Stack<Command> commands = new Stack<Command>();
+        public Stack<Command> Commands
+        {
+            get { return commands; }
         }
 
         #endregion

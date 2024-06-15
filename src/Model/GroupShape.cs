@@ -15,8 +15,10 @@ namespace Draw.src.Model
 
     namespace Draw.src.Model
     {
+        [Serializable]
         internal class GroupShape : Shape
         {
+            [Serializable]
             private class Proportions 
             {
                 float startPointProportionHorizontal;
@@ -117,17 +119,35 @@ namespace Draw.src.Model
             }
             public override void DrawSelf(Graphics grfx)
             {
-                Color color = Color.FromArgb(Opacity, FillColor);
                 base.DrawSelf(grfx);
                 for (int i = 0; i < shapes.Count; i++) 
                 {
                     shapes.ElementAt(i).StartPoint = new PointF(StartPoint.X + Width * proportions[i].StartPointProportionHorizontal, StartPoint.Y + Height * proportions[i].StartPointProportionVertical);
                     shapes.ElementAt(i).EndPoint = new PointF(EndPoint.X - Width * proportions[i].EndPointProportionHorizontal, EndPoint.Y - Height * proportions[i].EndPointProportionVerical);
-                    shapes.ElementAt(i).FillColor = color;
+                    Color color;
+                    if (OutlineColor != Color.Empty)
+                    {
+                        color = Color.FromArgb(Opacity, FillColor);
+                        shapes.ElementAt(i).FillColor = color;
+                    }
+                    if (OutlineColor != Color.Empty)
+                    {
+                        color = Color.FromArgb(Opacity, OutlineColor);
+                        shapes.ElementAt(i).OutlineColor = color;
+                    }
                     shapes.ElementAt(i).RotationPoint = RotationPoint;
                     shapes.ElementAt(i).LastRotationAngle = this.LastRotationAngle;
-                    shapes.ElementAt(i).Matrix.Reset();
-                    shapes.ElementAt(i).Matrix.RotateAt(LastRotationAngle, RotationPoint);
+                    if (shapes.ElementAt(i).Matrix == null)
+                    {
+                        shapes.ElementAt(i).Matrix = new Matrix();
+                        shapes.ElementAt(i).Matrix.Reset();
+                        shapes.ElementAt(i).Matrix.RotateAt(LastRotationAngle, RotationPoint);
+                    }
+                    else
+                    {
+                        shapes.ElementAt(i).Matrix.Reset();
+                        shapes.ElementAt(i).Matrix.RotateAt(LastRotationAngle, RotationPoint);
+                    }
                     shapes.ElementAt(i).DrawSelf(grfx);
                     //Rotate(LastRotationAngle);
                     //new PointF(Location.X + Math.Abs(Width) / 2, Location.Y + Math.Abs(Height) / 2)

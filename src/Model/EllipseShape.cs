@@ -8,6 +8,7 @@ using static System.Collections.Specialized.BitVector32;
 
 namespace Draw.src.Model
 {
+    [Serializable]
     internal class EllipseShape : Shape
     {
         #region Constructor

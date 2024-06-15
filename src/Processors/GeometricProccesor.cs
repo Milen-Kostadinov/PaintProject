@@ -36,12 +36,44 @@ namespace Draw.src.Processors
         {
             return 180 - (float)(Math.Atan2(point.X - (Selection.Location.X + Math.Abs(Selection.Width) / 2), point.Y - (Selection.Location.Y + Math.Abs(Selection.Height) / 2)) * 180 / Math.PI);
         }
+        public void RotateShape(Shape selection)
+        {
+            if (selection.GetType().Name.Equals("SelectionShape"))
+            {
+                foreach (Shape shape in selection.GetShapes())
+                {
+                    shape.Matrix.Reset();
+                    shape.RotationPoint = new PointF(shape.Location.X + Math.Abs(shape.Width) / 2, shape.Location.Y + Math.Abs(shape.Height) / 2);
+                    shape.Matrix.RotateAt(shape.LastRotationAngle, shape.RotationPoint);
+                }
+            }
+            else
+            {
+                selection.Matrix.Reset();
+                selection.RotationPoint = new PointF(selection.Location.X + Math.Abs(selection.Width) / 2, selection.Location.Y + Math.Abs(selection.Height) / 2);
+                selection.Matrix.RotateAt(selection.LastRotationAngle, new PointF(selection.Location.X + Math.Abs(selection.Width) / 2, selection.Location.Y + Math.Abs(selection.Height) / 2));
+            }
+
+        }
         public void RotateShape(Shape selection, float angle)
         {
-            selection.Matrix.Reset();
-            selection.RotationPoint = new PointF(selection.Location.X + Math.Abs(selection.Width) / 2, selection.Location.Y + Math.Abs(selection.Height) / 2);
-            selection.Matrix.RotateAt(angle, new PointF(selection.Location.X + Math.Abs(selection.Width) / 2, selection.Location.Y + Math.Abs(selection.Height) / 2));
-            selection.LastRotationAngle = angle;
+            if (selection.GetType().Name.Equals("SelectionShape"))
+            {
+                foreach (Shape shape in selection.GetShapes())
+                {
+                    shape.Matrix.Reset();
+                    shape.RotationPoint = new PointF(shape.Location.X + Math.Abs(shape.Width) / 2, shape.Location.Y + Math.Abs(shape.Height) / 2);
+                    shape.Matrix.RotateAt(shape.LastRotationAngle, shape.RotationPoint);
+                    shape.LastRotationAngle = angle;
+                }
+            }
+            else
+            {
+                selection.Matrix.Reset();
+                selection.RotationPoint = new PointF(selection.Location.X + Math.Abs(selection.Width) / 2, selection.Location.Y + Math.Abs(selection.Height) / 2);
+                selection.Matrix.RotateAt(angle, new PointF(selection.Location.X + Math.Abs(selection.Width) / 2, selection.Location.Y + Math.Abs(selection.Height) / 2));
+                selection.LastRotationAngle = angle;
+            }
         }
     }
 }

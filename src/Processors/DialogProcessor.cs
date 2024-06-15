@@ -5,7 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace Draw
 {
@@ -66,10 +70,12 @@ namespace Draw
             get { return selectionTool; }
             set { selectionTool = value; }
         }
+        private int index = 0;
         #endregion
-        public void AddShape(ShapesEnum shapeClass, ColorsEnum color)
+        public void AddShape(ShapesEnum shapeClass, Color color)
         {
             if (Selection != null) Selection.IsSelected = false;
+            if (Selection != null && Selection.GetType().Name.Equals("SelectionShape"))DisbandSelection();
             Shape shape;
             switch (shapeClass) 
             {
@@ -85,7 +91,7 @@ namespace Draw
                 case ShapesEnum.Diamond: shape = new DiamondShape(); break;
                 default: shape = null; break;
             }
-            shape.FillColor = CreateColor(color);
+            shape.FillColor = color;
             ShapeList.Add(shape);
             Selection = shape;
         }
@@ -156,15 +162,14 @@ namespace Draw
             shape.EndPoint = new PointF(shape.EndPoint.X + Math.Abs(point.X) - Math.Abs(points[1].X),
                                         shape.EndPoint.Y + Math.Abs(point.Y) - Math.Abs(points[1].Y));*/
 
-            RotateShape(Selection, shape.LastRotationAngle);
-            shape.StartPoint = new PointF(shape.StartPoint.X + point.X - lastLocation.X,
-                                        shape.StartPoint.Y + point.Y - lastLocation.Y);
-            shape.EndPoint = new PointF(shape.EndPoint.X + point.X - lastLocation.X,
-                                        shape.EndPoint.Y + point.Y - lastLocation.Y);
         }
         public void TranslateTo(PointF point)
         {
-            TranslateToPoint(point, Selection);
+            RotateShape(Selection);
+            Selection.StartPoint = new PointF(Selection.StartPoint.X + point.X - lastLocation.X,
+                                        Selection.StartPoint.Y + point.Y - lastLocation.Y);
+            Selection.EndPoint = new PointF(Selection.EndPoint.X + point.X - lastLocation.X,
+                                        Selection.EndPoint.Y + point.Y - lastLocation.Y);
             lastLocation = point;
         }
         public void SelectElements()
@@ -178,24 +183,17 @@ namespace Draw
                 }
             }
         }
-        public Shape CreateGroup()
+        public Shape CreateGroup(Shape shapeIn)
         {
-            List<Shape> shapes = new List<Shape>();
-
-            foreach (Shape shape in ShapeList)
-            {
-                if (SelectionTool.Contains(shape) && shape != SelectionTool)
-                {
-                    shape.IsSelected = true;
-                    shapes.Add(shape);
-                }
-            }
+            List<Shape> shapes = shapeIn.GetShapes();
             GroupShape group = new GroupShape(shapes);
+            group.HasBeenInteractedWith = true;
             if(shapes.Count > 1)
             {
                 ShapeList.Add(group);
                 foreach (Shape shape in shapes)
                 {
+                    shape.IsSelected = false;
                     ShapeList.Remove(shape);
                 }
             }
@@ -229,14 +227,59 @@ namespace Draw
             Selection.GetShapes().ForEach(shape => { ShapeList.Add(shape); shape.IsSelected = false; });
             ShapeList.Remove(Selection);
         }
+        public void DisbandGroup()
+        {
+            Selection.GetShapes().ForEach(shape => { ShapeList.Add(shape); shape.IsSelected = false; });
+            ShapeList.Remove(Selection);
+        }
         public PointF RotatePointInShapePlane(PointF point, Shape shape) 
         {
-            PointF[] points = { point };
-            Matrix matrix = shape.Matrix.Clone();
-            matrix.Invert();
-            matrix.TransformPoints(points);
-            matrix.Dispose();
-            return points[0];
+            if (shape.Matrix != null)
+            {
+                PointF[] points = { point };
+                Matrix matrix = shape.Matrix.Clone();
+                matrix.Invert();
+                matrix.TransformPoints(points);
+                matrix.Dispose();
+                return points[0];
+            }
+            return point;
+        }
+        public void ReverseCommand(Command command) 
+        {
+            switch (command._command)
+            {
+                case CommandsEnum.Add: ShapeList.Remove(command._shape); break;
+                case CommandsEnum.Remove: ShapeList.Add(command._shape); break;
+                case CommandsEnum.Translate: command._shape.StartPoint = RotatePointInShapePlane(command._shapeChanges.StartPoint, command._shape); command._shape.EndPoint = RotatePointInShapePlane(command._shapeChanges.EndPoint, command._shape); break;
+                case CommandsEnum.Rotate: command._shape.LastRotationAngle = command._shapeChanges.LastRotationAngle; RotateShape(command._shape); break;
+                case CommandsEnum.ChangeColor: command._shape.FillColor = command._shapeChanges.FillColor; command._shape.OutlineColor = command._shapeChanges.OutlineColor; break;   
+                default: Console.WriteLine("bad command"); break;
+            }
+        }
+        public void DifSelectionPlus() 
+        {
+            Selection.IsSelected = false;
+            Selection = ShapeList.ElementAt(index);
+            Selection.IsSelected = true;
+            if (++index >= ShapeList.Count)
+            { 
+                index = 0;
+            }
+        }
+        public void DifSelectionMinus()
+        {
+            Selection.IsSelected = false;
+            Selection = ShapeList.ElementAt(index);
+            Selection.IsSelected = true;
+            if (--index < 0)
+            {
+                index = ShapeList.Count - 1;
+            }
+        }
+        public void SaveFile() 
+        {
+            
         }
     }
 }

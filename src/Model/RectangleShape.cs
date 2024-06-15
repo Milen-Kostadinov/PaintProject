@@ -4,9 +4,10 @@ using System.Net;
 
 namespace Draw
 {
+    [Serializable]
 	public class RectangleShape : Shape
-	{
-		#region Constructor
+    {
+        #region Constructor
         public RectangleShape()
         {
         }

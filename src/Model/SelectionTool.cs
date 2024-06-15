@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Draw.src.Processors
 {
+    [Serializable]
     public class SelectionTool: Shape
     {
         public SelectionTool()
@@ -23,8 +24,6 @@ namespace Draw.src.Processors
             if (rect.X < shape.Location.X && rect.X + rect.Width > shape.Location.X
                 && (rect.Y > shape.Location.Y && rect.Y < shape.Location.Y + shape.Height
                 || rect.Y + rect.Height > shape.Location.Y && rect.Y + rect.Height < shape.Location.Y + shape.Height))
-
-
             {
                 return true;
             }

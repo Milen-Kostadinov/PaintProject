@@ -9,6 +9,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Draw.src.Model
 {
+    [Serializable]
     internal class IsoscelesTriangleShape : Shape
     {
         private PointF[] points;

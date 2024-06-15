@@ -8,7 +8,8 @@ using System.Windows.Forms;
 
 namespace Draw
 {
-	public abstract class Shape
+    [Serializable]
+    public abstract class Shape
 	{
 		#region Constructors
 
@@ -77,10 +78,11 @@ namespace Draw
 			get { return opacity; }
 			set { opacity = value; }
 		}
-		public Color outlineColor;
+		private Color outlineColor;
 		public virtual Color OutlineColor
 		{
-			get { return outlineColor; }
+
+            get { return outlineColor; }
 			set { outlineColor = value; }
 		}
 		private int outlineWidth;
@@ -101,20 +103,14 @@ namespace Draw
             get { return isSelected; }
             set { isSelected = value; }
         }
-		//redundant but functionality still there.....can't remove rn
-        private int groupId;
-        public int GroupId 
-        {
-            get { return groupId; }
-            set { groupId = value; }
-        }
 		private bool hasBeenInteractedWith;
 		public bool HasBeenInteractedWith
 		{
 			get { return hasBeenInteractedWith; }
 			set { hasBeenInteractedWith = value; }
-		}
-		private Matrix matrix = new Matrix(); 
+        }
+        [NonSerialized]
+        private Matrix matrix = new Matrix(); 
 		public Matrix Matrix
         {
             get { return matrix; }
@@ -153,7 +149,6 @@ namespace Draw
 				CurrentSelectedSide = SelectedSide.BottomRightCorner;
 				return true;
 			}
-			//daskjdfashfjsahfasf
 			else if (new RectangleF(Width > 0 ? StartPoint.X - 5 : StartPoint.X, Height > 0 ? StartPoint.Y : (StartPoint.Y + Height), 5, Math.Abs(Height)).Contains(point))
 			{
 				CurrentSelectedSide = SelectedSide.Left;
@@ -164,7 +159,6 @@ namespace Draw
 				CurrentSelectedSide = SelectedSide.Right;
 				return true;
 			}
-			//dsajkgfshjafgjhasgfa
 			else if (new RectangleF(Width > 0 ? StartPoint.X : (StartPoint.X + Width), Height > 0 ? StartPoint.Y - 5 : StartPoint.Y, Math.Abs(Width), 5).Contains(point))
 			{
 				CurrentSelectedSide = SelectedSide.Top;
@@ -190,6 +184,12 @@ namespace Draw
 		{
 			// shape.Rectangle.Inflate(shape.BorderWidth, shape.BorderWidth);
 			//Rotate(LastRotationAngle);
+			if (matrix == null)
+			{
+				RotationPoint = new PointF(Location.X + Math.Abs(Width) / 2, Location.Y + Math.Abs(Height) / 2);
+				matrix = new Matrix();
+				matrix.RotateAt(lastRotationAngle, RotationPoint);
+			}
 			grfx.Transform = matrix;
 
             Width = EndPoint.X - StartPoint.X;

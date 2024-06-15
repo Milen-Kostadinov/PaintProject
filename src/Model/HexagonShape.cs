@@ -9,6 +9,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Draw.src.Model
 {
+    [Serializable]
     internal class HexagonShape : Shape
     {
         private PointF[] points;
@@ -51,7 +52,7 @@ namespace Draw.src.Model
         {
             base.DrawSelf(grfx);
             CalcPoints();
-            Color color = Color.FromArgb(-3620889);
+            Color color = Color.FromArgb(Opacity, FillColor);
             grfx.FillPolygon(new SolidBrush(color), points);
             color = Color.FromArgb(Opacity, OutlineColor);
             grfx.DrawPolygon(new Pen(color, OutlineWidth), points);

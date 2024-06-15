@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Draw.src.Model
 {
+    [Serializable]
     internal class SelectionShape : Shape
     {
+        [Serializable]
         private class Proportions
         {
             float startPointProportionHorizontal;
@@ -40,8 +43,8 @@ namespace Draw.src.Model
             {
             }
         }
-        List<Shape> shapes = new List<Shape>();
-        List<Proportions> proportions = new List<Proportions>();
+        private List<Shape> shapes = new List<Shape>();
+        private List<Proportions> proportions = new List<Proportions>();
 
         public SelectionShape(List<Shape> shapes)
         {
@@ -99,11 +102,19 @@ namespace Draw.src.Model
         {
             foreach (Shape shape in shapes)
             {
-                if (shape.OutlineContainsPoint(point)) 
+                if (shape.Matrix != null)
                 {
-                    this.CurrentSelectedSide = shape.CurrentSelectedSide;
-                    return true;
-                } 
+                    PointF[] points = { point };
+                    Matrix matrix = shape.Matrix.Clone();
+                    matrix.Invert();
+                    matrix.TransformPoints(points);
+                    matrix.Dispose();
+                    if (shape.OutlineContainsPoint(points[0]))
+                    {
+                        CurrentSelectedSide = shape.CurrentSelectedSide;
+                        return true;
+                    }
+                }
             }
             return false;
         }
@@ -111,10 +122,17 @@ namespace Draw.src.Model
         {
             foreach (Shape shape in shapes)
             {
-                if (shape.RotationRectContains(point))
+                PointF[] points = { point };
+                if (shape.Matrix != null)
                 {
-                    this.CurrentSelectedSide = shape.CurrentSelectedSide;
-                    return true;
+                    Matrix matrix = shape.Matrix.Clone();
+                    matrix.Invert();
+                    matrix.TransformPoints(points);
+                    matrix.Dispose();
+                    if (shape.RotationRectContains(points[0]))
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -129,15 +147,18 @@ namespace Draw.src.Model
             {
                 shapes.ElementAt(i).StartPoint = new PointF(StartPoint.X + proportions[i].StartPointProportionHorizontal, StartPoint.Y + proportions[i].StartPointProportionVertical);
                 shapes.ElementAt(i).EndPoint = new PointF(EndPoint.X - proportions[i].EndPointProportionHorizontal, EndPoint.Y - proportions[i].EndPointProportionVerical);
-                Color color = Color.FromArgb(Opacity, FillColor);
-                shapes.ElementAt(i).FillColor = color;
-                color = Color.FromArgb(Opacity, OutlineColor);
-                shapes.ElementAt(i).OutlineColor = color;
-                shapes.ElementAt(i).RotationPoint = new PointF(shapes.ElementAt(i).Location.X + shapes.ElementAt(i).Width / 2, shapes.ElementAt(i).Location.Y + shapes.ElementAt(i).Height / 2);
-                shapes.ElementAt(i).LastRotationAngle = shapes.ElementAt(i).LastRotationAngle;
+                Color color;
+                if (OutlineColor != Color.Empty)
+                {
+                    color = Color.FromArgb(Opacity, FillColor);
+                    shapes.ElementAt(i).FillColor = color;
+                }
+                if (OutlineColor != Color.Empty) 
+                {
+                    color = Color.FromArgb(Opacity, OutlineColor);
+                    shapes.ElementAt(i).OutlineColor = color;
+                }
                 shapes.ElementAt(i).IsSelected = true;
-                shapes.ElementAt(i).Matrix.Reset();
-                shapes.ElementAt(i).Matrix.RotateAt(LastRotationAngle, RotationPoint);
                 shapes.ElementAt(i).DrawSelf(grfx);
                 //Rotate(LastRotationAngle);
                 //new PointF(Location.X + Math.Abs(Width) / 2, Location.Y + Math.Abs(Height) / 2)

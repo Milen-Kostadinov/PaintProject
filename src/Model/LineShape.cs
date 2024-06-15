@@ -4,6 +4,7 @@ using System.Reflection;
 
 namespace Draw.src.Model
 {
+    [Serializable]
     internal class LineShape : Shape
     {
         public LineShape()
